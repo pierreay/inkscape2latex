@@ -1,3 +1,3 @@
 - [ ] Write README with CLI usage and importation using a submodule
-- [ ] Add full example under ./examples
+- [ ] Add full example under ./examples (incl. Makefile & JSON & Inkscape demo)
 - [ ] Add LICENSE in the repository and in files
