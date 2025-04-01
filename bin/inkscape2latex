@@ -43,7 +43,7 @@ INKSCAPE_OPTS_EPS="--export-area-drawing --export-type=eps --export-latex"
 
 function help() {
     cat << EOF
-Usage: $0 [-l LAYERFILE.json] INFILE.svg OUTFILE.(pdf | eps)
+Usage: $(basename $0) [-l LAYERFILE.json] INFILE.svg OUTFILE.(pdf | eps)
 
 Export an Inkscape source file for LaTeX.
 
@@ -70,7 +70,7 @@ Options:
     -l LAYERFILE:   Path to a JSON layer file.
 
 Examples:
-$ $0 -l utils/layers.json gfx/inkscape/drawing.svg build/gfx/inkscape/drawing.pdf
+$ $(basename $0) -l utils/layers.json gfx/inkscape/drawing.svg build/gfx/inkscape/drawing.pdf
 EOF
 }
 
@@ -80,7 +80,7 @@ function argparse() {
         help
         exit 0
     elif [[ ${#} != 2 && ${#} != 4 ]]; then
-        echo -e "${_col_err}[x] $0:${_col_res} Bad number of arguments!"
+        echo -e "${_col_err}[x] $(basename $0):${_col_res} Bad number of arguments!"
         exit 1
     fi
 
@@ -96,19 +96,19 @@ function argparse() {
 
     # Sanity-check of passed arguments and options.
     if [[ ! "${INFILE}" =~ .*\.svg ]]; then
-        echo -e "${_col_err}[x] $0:${_col_res} Not an SVG: ${INFILE}"
+        echo -e "${_col_err}[x] $(basename $0):${_col_res} Not an SVG: ${INFILE}"
         exit 1
     elif [[ ! -f "${INFILE}" ]]; then
-        echo -e "${_col_err}[x] $0:${_col_res} Does not exists: ${INFILE}"
+        echo -e "${_col_err}[x] $(basename $0):${_col_res} Does not exists: ${INFILE}"
         exit 1
     elif [[ ! "${OUTFILE}" =~ .*\.pdf && ! "${OUTFILE}" =~ .*\.eps ]]; then
-        echo -e "${_col_err}[x] $0:${_col_res} Not a PDF or an EPS: ${OUTFILE}"
+        echo -e "${_col_err}[x] $(basename $0):${_col_res} Not a PDF or an EPS: ${OUTFILE}"
         exit 1
     elif [[ ! -z "${LAYERFILE}" && ! -f "${LAYERFILE}" ]]; then
-        echo -e "${_col_err}[x] $0:${_col_res} Does not exists: ${LAYERFILE}"
+        echo -e "${_col_err}[x] $(basename $0):${_col_res} Does not exists: ${LAYERFILE}"
         exit 1
     elif [[ ! -z "${LAYERFILE}" && ! "${LAYERFILE}" =~ .*\.json ]]; then
-        echo -e "${_col_err}[x] $0:${_col_res} Not a JSON: ${LAYERFILE}"
+        echo -e "${_col_err}[x] $(basename $0):${_col_res} Not a JSON: ${LAYERFILE}"
         exit 1
     fi
 }
@@ -118,10 +118,10 @@ function argparse() {
 function execretry() {
     eval $*
     if [[ $? != 0 ]]; then
-        echo -e "${_col_wrn}[!] $0:${_col_res} Retry: ${INFILE}"
+        echo -e "${_col_wrn}[!] $(basename $0):${_col_res} Retry: ${INFILE}"
         eval $*
         if [[ $? != 0 ]]; then
-            echo -e "${_col_err}[x] $0:${_col_res} Error: ${INFILE}"
+            echo -e "${_col_err}[x] $(basename $0):${_col_res} Error: ${INFILE}"
             exit 1
         fi
     fi
@@ -129,7 +129,7 @@ function execretry() {
 
 function inkscape_fullexport() {
     local inkscape_options="${1}"
-    echo -e "${_col_ok}[+] $0:${_col_res} Full exportation: ${INFILE} -> ${OUTFILE}"
+    echo -e "${_col_ok}[+] $(basename $0):${_col_res} Full exportation: ${INFILE} -> ${OUTFILE}"
     execretry inkscape "${inkscape_options}" '--export-filename="${OUTFILE}"' '"${INFILE}"'
 }
 
@@ -141,10 +141,10 @@ function inkscape_layeredexport() {
 
     # Check.
     if [[ "${export_nb:=-1}" -lt 0 || "${export_nb}" -lt 0 ]]; then
-        echo -e "${_col_err}[x] $0:${_col_res} JSON parsing failed!"
+        echo -e "${_col_err}[x] $(basename $0):${_col_res} JSON parsing failed!"
         exit 1
     else
-        echo -e "${_col_ok}[+] $0:${_col_res} ${export_nb} layer(s) found: ${INFILE}"
+        echo -e "${_col_ok}[+] $(basename $0):${_col_res} ${export_nb} layer(s) found: ${INFILE}"
     fi
 
     # Iterate over all layers.
@@ -155,7 +155,7 @@ function inkscape_layeredexport() {
         local final_outfile="${OUTFILE/.$OUTFT/-${name}.$OUTFT}"
 
         # Perform the exportation.
-        echo -e "${_col_ok}[+] $0:${_col_res} Layered exportation: idx=${i} ; input=${INFILE} ; output=${final_outfile} ; name=${name} ; excluded_layers=${excluded_layers}"
+        echo -e "${_col_ok}[+] $(basename $0):${_col_res} Layered exportation: idx=${i} ; input=${INFILE} ; output=${final_outfile} ; name=${name} ; excluded_layers=${excluded_layers}"
         execretry inkscape "${inkscape_options}" --actions="\"select-by-id:${excluded_layers}; delete-selection; export-do\"" --export-filename=\"${final_outfile}\" \"${INFILE}\"
     done
 }
@@ -170,7 +170,7 @@ function main() {
     elif [[ "${OUTFT}" == "eps" ]]; then
         local inkscape_options="${INKSCAPE_OPTS_EPS}"
     else
-        echo -e "${_col_err}[x] $0:${_col_res} Cannot select Inkscape options based on filetype!"
+        echo -e "${_col_err}[x] $(basename $0):${_col_res} Cannot select Inkscape options based on filetype!"
         exit 1
     fi
 
