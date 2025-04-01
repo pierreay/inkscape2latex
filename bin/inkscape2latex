@@ -1,0 +1,186 @@
+#!/usr/bin/env bash
+
+# TODO: Parse the SVG to automatically set layers' id from tags instead of having of doing it manually
+# TODO: Add a command to init a layerfile.
+
+# Globals
+# ==============================================================================
+
+# Colors.
+_col_ok='\e[0;32m'; _col_err='\e[1;31m'; _col_wrn='\e[0;33m'; _col_res='\e[0m'
+
+# Arguments.
+INFILE=""
+OUTFILE=""
+
+# Options.
+LAYERFILE=""
+
+# Misc variables.
+OUTFT=""
+
+# Inkscape options that will be used depending on OUTFT.
+#
+# --export-area-drawing:
+#   Will export only the area surrounding object boxes. A workaround to have a
+#   fixed export size is to use a fixed but nearly invisible background
+#   defining the drawing area for multiple layer exports.
+#
+# --export-area-page: 
+#   Will export all the area defining the page.
+#
+# --export-type=OUTFT: 
+#   Use the specified format.
+#
+# --export-latex: 
+#   Use a separate LaTeX file for fonts (allow fonts to be rendered by the
+#   final LaTeX engine).
+INKSCAPE_OPTS_PDF="--export-area-page    --export-type=pdf --export-latex"
+INKSCAPE_OPTS_EPS="--export-area-drawing --export-type=eps --export-latex"
+
+# Functions
+# ==============================================================================
+
+function help() {
+    cat << EOF
+Usage: $0 [-l LAYERFILE.json] INFILE.svg OUTFILE.(pdf | eps)
+
+Export an Inkscape source file for LaTeX.
+
+The source file (INFILE) should be an SVG which will be exported in two files:
+- An output file without text (OUTFILE).
+- An additional file containing the text (OUTFILE_tex).
+
+The output file can be included into LaTex using the '\input{OUTFILE.(pdf | eps)_tex}' command.
+
+Optionnaly:
+- The script can export multiple layer combinations of the input.
+- The supported filetypes for the output are PDF and EPS.
+    eps: Encapsulated PostScript (EPS)
+        Do not support transparancy or page aera export.
+    pdf: Portable Document Format (PDF) 
+        Support transparancy and page aera export.
+
+Dependencies:
+- inkscape
+- jq
+- bc
+
+Options:
+    -l LAYERFILE:   Path to a JSON layer file.
+
+Examples:
+$ $0 -l utils/layers.json gfx/inkscape/drawing.svg build/gfx/inkscape/drawing.pdf
+EOF
+}
+
+function argparse() {
+    # Check arg number or asking help.
+    if [[ ${#} == 0 || ${1} == "-h" || ${1} == "--help" ]]; then
+        help
+        exit 0
+    elif [[ ${#} != 2 && ${#} != 4 ]]; then
+        echo -e "${_col_err}[x] $0:${_col_res} Bad number of arguments!"
+        exit 1
+    fi
+
+    # Get arguments and options.
+    if [[ ${1} == "-l" ]]; then
+        LAYERFILE="${2}"
+        shift
+        shift
+    fi
+    INFILE="${1}"
+    OUTFILE="${2}"
+    OUTFT="${OUTFILE/*./}"
+
+    # Sanity-check of passed arguments and options.
+    if [[ ! "${INFILE}" =~ .*\.svg ]]; then
+        echo -e "${_col_err}[x] $0:${_col_res} Not an SVG: ${INFILE}"
+        exit 1
+    elif [[ ! -f "${INFILE}" ]]; then
+        echo -e "${_col_err}[x] $0:${_col_res} Does not exists: ${INFILE}"
+        exit 1
+    elif [[ ! "${OUTFILE}" =~ .*\.pdf && ! "${OUTFILE}" =~ .*\.eps ]]; then
+        echo -e "${_col_err}[x] $0:${_col_res} Not a PDF or an EPS: ${OUTFILE}"
+        exit 1
+    elif [[ ! -z "${LAYERFILE}" && ! -f "${LAYERFILE}" ]]; then
+        echo -e "${_col_err}[x] $0:${_col_res} Does not exists: ${LAYERFILE}"
+        exit 1
+    elif [[ ! -z "${LAYERFILE}" && ! "${LAYERFILE}" =~ .*\.json ]]; then
+        echo -e "${_col_err}[x] $0:${_col_res} Not a JSON: ${LAYERFILE}"
+        exit 1
+    fi
+}
+
+# Use a retry on fail strategy when Inkscape crash because of exporting a lot
+# of drawing in parallel from a Makefile.
+function execretry() {
+    eval $*
+    if [[ $? != 0 ]]; then
+        echo -e "${_col_wrn}[!] $0:${_col_res} Retry: ${INFILE}"
+        eval $*
+        if [[ $? != 0 ]]; then
+            echo -e "${_col_err}[x] $0:${_col_res} Error: ${INFILE}"
+            exit 1
+        fi
+    fi
+}
+
+function inkscape_fullexport() {
+    local inkscape_options="${1}"
+    echo -e "${_col_ok}[+] $0:${_col_res} Full exportation: ${INFILE} -> ${OUTFILE}"
+    execretry inkscape "${inkscape_options}" '--export-filename="${OUTFILE}"' '"${INFILE}"'
+}
+
+function inkscape_layeredexport() {
+    local inkscape_options="${1}"
+    local infile_basename="$(basename $INFILE)"
+    # Get number of exportation for current entry from JSON.
+    local export_nb=$(eval jq "'.\"${infile_basename}\" | length'" "${LAYERFILE}")
+
+    # Check.
+    if [[ "${export_nb:=-1}" -lt 0 || "${export_nb}" -lt 0 ]]; then
+        echo -e "${_col_err}[x] $0:${_col_res} JSON parsing failed!"
+        exit 1
+    else
+        echo -e "${_col_ok}[+] $0:${_col_res} ${export_nb} layer(s) found: ${INFILE}"
+    fi
+
+    # Iterate over all layers.
+    for i in $(seq 0 $(echo ${export_nb}-1 | bc) ); do
+        # Get name and layers for current exportation from JSON.
+        local name=$(jq ".\"${infile_basename}\"" "${LAYERFILE}" | jq ".[$i].name" | tr -d '"')
+        local excluded_layers=$(jq ".\"${infile_basename}\"" "${LAYERFILE}" | jq ".[$i].\"excluded-layers\"" | tr -d '"')
+        local final_outfile="${OUTFILE/.$OUTFT/-${name}.$OUTFT}"
+
+        # Perform the exportation.
+        echo -e "${_col_ok}[+] $0:${_col_res} Layered exportation: idx=${i} ; input=${INFILE} ; output=${final_outfile} ; name=${name} ; excluded_layers=${excluded_layers}"
+        execretry inkscape "${inkscape_options}" --actions="\"select-by-id:${excluded_layers}; delete-selection; export-do\"" --export-filename=\"${final_outfile}\" \"${INFILE}\"
+    done
+}
+
+function main() {
+    # Parse input.
+    argparse "${@}"
+
+    # Get the right Inkscape options for exporting.
+    if [[ "${OUTFT}" == "pdf" ]]; then
+        local inkscape_options="${INKSCAPE_OPTS_PDF}"
+    elif [[ "${OUTFT}" == "eps" ]]; then
+        local inkscape_options="${INKSCAPE_OPTS_EPS}"
+    else
+        echo -e "${_col_err}[x] $0:${_col_res} Cannot select Inkscape options based on filetype!"
+        exit 1
+    fi
+
+    # Perform a first full exportation.
+    inkscape_fullexport "${inkscape_options}"
+
+    # If a layer file has been specified, parse it for the layered exportation.
+    if [[ ! -z "${LAYERFILE}" ]]; then
+        inkscape_layeredexport "${inkscape_options}"
+    fi
+}
+
+main "${@}"

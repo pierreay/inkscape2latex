@@ -1,0 +1,3 @@
+- [ ] Write README with usage
+- [ ] Add full example under ./examples
+- [ ] Add LICENSE in the repository and in files
