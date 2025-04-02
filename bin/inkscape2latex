@@ -96,19 +96,19 @@ function argparse() {
 
     # Sanity-check of passed arguments and options.
     if [[ ! "${INFILE}" =~ .*\.svg ]]; then
-        echo -e "${_col_err}[x] $(basename $0):${_col_res} Not an SVG: ${INFILE}"
+        echo -e "${_col_err}[x] $(basename $0):${_col_res} Input file not an SVG: ${INFILE}"
         exit 1
     elif [[ ! -f "${INFILE}" ]]; then
-        echo -e "${_col_err}[x] $(basename $0):${_col_res} Does not exists: ${INFILE}"
+        echo -e "${_col_err}[x] $(basename $0):${_col_res} Input file does not exists: ${INFILE}"
         exit 1
     elif [[ ! "${OUTFILE}" =~ .*\.pdf && ! "${OUTFILE}" =~ .*\.eps ]]; then
-        echo -e "${_col_err}[x] $(basename $0):${_col_res} Not a PDF or an EPS: ${OUTFILE}"
+        echo -e "${_col_err}[x] $(basename $0):${_col_res} Output file not a PDF or an EPS: ${OUTFILE}"
         exit 1
     elif [[ ! -z "${LAYERFILE}" && ! -f "${LAYERFILE}" ]]; then
-        echo -e "${_col_err}[x] $(basename $0):${_col_res} Does not exists: ${LAYERFILE}"
+        echo -e "${_col_err}[x] $(basename $0):${_col_res} Layer file does not exists: ${LAYERFILE}"
         exit 1
     elif [[ ! -z "${LAYERFILE}" && ! "${LAYERFILE}" =~ .*\.json ]]; then
-        echo -e "${_col_err}[x] $(basename $0):${_col_res} Not a JSON: ${LAYERFILE}"
+        echo -e "${_col_err}[x] $(basename $0):${_col_res} Layer file not a JSON: ${LAYERFILE}"
         exit 1
     fi
 }
