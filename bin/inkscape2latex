@@ -137,7 +137,8 @@ function execretry() {
     # Detect errors based on Inkscape return value.
     if [[ "${should_exit}" == true ]] || grep -E -q "${LOGFILE_ERROR_REGEX}" "${LOGFILE_PATH}"; then
         echo -e "${_col_err}[x] $(basename $0):${_col_res} Error: ${INFILE}"
-        echo -e "${_col_wrn}[!] $(basename $0):${_col_res} See log file: ${LOGFILE_PATH}"
+        echo -e "${_col_wrn}[!] $(basename $0):${_col_res} Cat log file: ${LOGFILE_PATH}"
+        cat ${LOGFILE_PATH}
         exit 1
     fi
 }
