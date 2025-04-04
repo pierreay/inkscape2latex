@@ -124,17 +124,19 @@ function argparse() {
 # of drawing in parallel from a Makefile.
 function execretry() {
     local should_exit=false
+    local retry_sleep=$(($RANDOM % 5 + 1))
     # First try.
     eval $*
 
     # Detect errors based on Inkscape return value.
     if [[ $? != 0 ]]; then
-        echo -e "${_col_wrn}[!] $(basename $0):${_col_res} Retry...: ${INFILE}"
+        echo -e "${_col_wrn}[!] $(basename $0):${_col_res} Sleep ${retry_sleep} and retry...: ${INFILE}"
+        sleep ${retry_sleep}
         eval $*
         [[ $? != 0 ]] && should_exit=true
     fi
 
-    # Detect errors based on Inkscape return value.
+    # Detect errors based on Inkscape log output.
     if [[ "${should_exit}" == true ]] || grep -E -q "${LOGFILE_ERROR_REGEX}" "${LOGFILE_PATH}"; then
         echo -e "${_col_err}[x] $(basename $0):${_col_res} Error: ${INFILE}"
         echo -e "${_col_wrn}[!] $(basename $0):${_col_res} Cat log file: ${LOGFILE_PATH}"
