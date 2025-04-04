@@ -3,6 +3,11 @@
 # TODO: Parse the SVG to automatically set layers' id from tags instead of having of doing it manually
 # TODO: Add a command to init a layerfile.
 
+# Do not open any Inkscape loading popup.
+# Side effect: display a harmless GTK warning, see:
+# https://gitlab.com/inkscape/inkscape/-/issues/5419
+unset DISPLAY
+
 # Globals
 # ==============================================================================
 
@@ -18,6 +23,8 @@ LAYERFILE=""
 
 # Misc variables.
 OUTFT=""
+LOGFILE_PATH="$(mktemp -t $(basename $0).XXXXXXXXXX)"
+LOGFILE_ERROR_REGEX='parse rerror|failed to create document'
 
 # Inkscape options that will be used depending on OUTFT.
 #
@@ -116,21 +123,29 @@ function argparse() {
 # Use a retry on fail strategy when Inkscape crash because of exporting a lot
 # of drawing in parallel from a Makefile.
 function execretry() {
+    local should_exit=false
+    # First try.
     eval $*
+
+    # Detect errors based on Inkscape return value.
     if [[ $? != 0 ]]; then
-        echo -e "${_col_wrn}[!] $(basename $0):${_col_res} Retry: ${INFILE}"
+        echo -e "${_col_wrn}[!] $(basename $0):${_col_res} Retry...: ${INFILE}"
         eval $*
-        if [[ $? != 0 ]]; then
-            echo -e "${_col_err}[x] $(basename $0):${_col_res} Error: ${INFILE}"
-            exit 1
-        fi
+        [[ $? != 0 ]] && should_exit=true
+    fi
+
+    # Detect errors based on Inkscape return value.
+    if [[ "${should_exit}" == true ]] || grep -E -q "${LOGFILE_ERROR_REGEX}" "${LOGFILE_PATH}"; then
+        echo -e "${_col_err}[x] $(basename $0):${_col_res} Error: ${INFILE}"
+        echo -e "${_col_wrn}[!] $(basename $0):${_col_res} See log file: ${LOGFILE_PATH}"
+        exit 1
     fi
 }
 
 function inkscape_fullexport() {
     local inkscape_options="${1}"
-    echo -e "${_col_ok}[+] $(basename $0):${_col_res} Full exportation: ${INFILE} -> ${OUTFILE}"
-    execretry inkscape "${inkscape_options}" '--export-filename="${OUTFILE}"' '"${INFILE}"'
+    echo -e "${_col_ok}[+] $(basename $0):${_col_res} Full exportation...: ${INFILE} -> ${OUTFILE}"
+    execretry inkscape "${inkscape_options}" '--export-filename="${OUTFILE}"' '"${INFILE}"' 2>"${LOGFILE_PATH}"
 }
 
 function inkscape_layeredexport() {
@@ -155,8 +170,8 @@ function inkscape_layeredexport() {
         local final_outfile="${OUTFILE/.$OUTFT/-${name}.$OUTFT}"
 
         # Perform the exportation.
-        echo -e "${_col_ok}[+] $(basename $0):${_col_res} Layered exportation: idx=${i} ; input=${INFILE} ; output=${final_outfile} ; name=${name} ; excluded_layers=${excluded_layers}"
-        execretry inkscape "${inkscape_options}" --actions="\"select-by-id:${excluded_layers}; delete-selection; export-do\"" --export-filename=\"${final_outfile}\" \"${INFILE}\"
+        echo -e "${_col_ok}[+] $(basename $0):${_col_res} Layered exportation...: idx=${i} ; input=${INFILE} ; output=${final_outfile} ; name=${name} ; excluded_layers=${excluded_layers}"
+        execretry inkscape "${inkscape_options}" --actions="\"select-by-id:${excluded_layers}; delete-selection; export-do\"" --export-filename=\"${final_outfile}\" \"${INFILE}\" 2>"${LOGFILE_PATH}"
     done
 }
 
