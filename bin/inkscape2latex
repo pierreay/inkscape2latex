@@ -20,6 +20,7 @@ OUTFILE=""
 
 # Options.
 LAYERFILE=""
+INKSCAPE_FONTS=false
 
 # Misc variables.
 OUTFT=""
@@ -38,27 +39,35 @@ LOGFILE_ERROR_REGEX='parse rerror|failed to create document'
 #
 # --export-type=OUTFT: 
 #   Use the specified format.
+INKSCAPE_OPTS_PDF="--export-area-page    --export-type=pdf"
+INKSCAPE_OPTS_EPS="--export-area-drawing --export-type=eps"
+
+# Inkscape option used when INKSCAPE_FONTS is true.
 #
 # --export-latex: 
 #   Use a separate LaTeX file for fonts (allow fonts to be rendered by the
 #   final LaTeX engine).
-INKSCAPE_OPTS_PDF="--export-area-page    --export-type=pdf --export-latex"
-INKSCAPE_OPTS_EPS="--export-area-drawing --export-type=eps --export-latex"
+INKSCAPE_FONTS_OPTS="--export-latex"
 
 # Functions
 # ==============================================================================
 
 function help() {
     cat << EOF
-Usage: $(basename $0) [-l LAYERFILE.json] INFILE.svg OUTFILE.(pdf | eps)
+    Usage: $(basename $0) [-l LAYERFILE.json] [--inkscape-fonts] INFILE.svg OUTFILE.(pdf | eps)
 
 Export an Inkscape source file for LaTeX.
 
-The source file (INFILE) should be an SVG which will be exported in two files:
-- An output file without text (OUTFILE).
-- An additional file containing the text (OUTFILE_tex).
+The source file (INFILE) should be an SVG.
 
-The output file can be included into LaTex using the '\input{OUTFILE.(pdf | eps)_tex}' command.
+If --inkscape-fonts is not passed, the SVG which will be exported in two files:
+- An output file excluding text (OUTFILE).
+- An sidecar TeX file including text (OUTFILE_tex).
+The figure can be included into LaTex using the '\input{OUTFILE.(pdf | eps)_tex}' command.
+
+If --inkscape-fonts is passed, the SVG which will be exported in one file:
+- An output file including text (OUTFILE).
+The figure can be included into LaTex using the '\includegraphics{OUTFILE.(pdf | eps)}' command.
 
 Optionnaly:
 - The script can export multiple layer combinations of the input.
@@ -74,7 +83,8 @@ Dependencies:
 - bc
 
 Options:
-    -l LAYERFILE:   Path to a JSON layer file.
+    -l LAYERFILE:       Path to a JSON layer file.
+    --inkscape-fonts:   Font rendered by Inkscape intead of LaTeX.
 
 Examples:
 $ $(basename $0) -l utils/layers.json gfx/inkscape/drawing.svg build/gfx/inkscape/drawing.pdf
@@ -86,7 +96,7 @@ function argparse() {
     if [[ ${#} == 0 || ${1} == "-h" || ${1} == "--help" ]]; then
         help
         exit 0
-    elif [[ ${#} != 2 && ${#} != 4 ]]; then
+    elif [[ ${#} -lt 2 && ${#} -gt 5 ]]; then
         echo -e "${_col_err}[x] $(basename $0):${_col_res} Bad number of arguments!"
         exit 1
     fi
@@ -95,6 +105,10 @@ function argparse() {
     if [[ ${1} == "-l" ]]; then
         LAYERFILE="${2}"
         shift
+        shift
+    fi
+    if [[ ${1} == "--inkscape-fonts" ]]; then
+        INKSCAPE_FONTS=true
         shift
     fi
     INFILE="${1}"
@@ -190,6 +204,9 @@ function main() {
     else
         echo -e "${_col_err}[x] $(basename $0):${_col_res} Cannot select Inkscape options based on filetype!"
         exit 1
+    fi
+    if [[ "${INKSCAPE_FONTS}" == false ]]; then
+        inkscape_options+=" ${INKSCAPE_FONTS_OPTS}"
     fi
 
     # Perform a first full exportation.
