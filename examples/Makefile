@@ -1,3 +1,7 @@
+# Program: inkscape2latex
+# Author: Pierre Ayoub
+# Date: 2025-09-13
+
 # Source files.
 INKSCAPE_SRC_FILES := $(shell find . -type f -name '*.svg')
 
