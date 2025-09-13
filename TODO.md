@@ -1,2 +1,1 @@
 - [ ] See how does it compares to https://github.com/jbohren/beamerscape and https://github.com/johnyf/svglatex 
-- [ ] Write README with CLI usage and importation using a submodule
