@@ -77,9 +77,9 @@ Optionnaly:
 - The script can export multiple layer combinations of the input.
 - The supported filetypes for the output are PDF and EPS.
     eps: Encapsulated PostScript (EPS)
-        Do not support transparancy or page aera export.
+        Do not support transparancy or page area export.
     pdf: Portable Document Format (PDF) 
-        Support transparancy and page aera export.
+        Support transparancy and page area export.
 
 Dependencies:
 - inkscape
