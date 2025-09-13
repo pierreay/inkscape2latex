@@ -1,0 +1,157 @@
+#!/usr/bin/env python
+
+# Program: inkscape2latex-ng
+# Author: Pierre Ayoub
+# Date: 2025-09-13
+# Template UUID: b4b9d863-051e-494d-a98b-22b9d0ee4727
+
+from os import path
+import sys
+import argparse
+import logging
+import tomllib
+
+LOGGER = None
+
+class InkscapeExporterConfig():
+    """Configuration for a `InkscapeExporter`.
+
+    This can be configured from command-line or a sidecar TOML file on-disk.
+
+    """
+    # Constants ================================================================
+
+    # Export all the area defining the page.
+    INKSCAPE_OPT_AREA        = "--export-area-page"
+    # Export in PDF rather than EPS.
+    INKSCAPE_OPT_TYPE        = "--export-type=pdf"
+    # Export in current working directroy by default.
+    OUTPUT_DIRECTORY_DEFAULT = "."
+    # Let Inkscape render fonts by default.
+    FONTS_ENGINE_DEFAULT     = "inkscape"
+
+    # Runtime variables ========================================================
+
+    # Input SVG file to export [string]
+    input_file       = None
+    # Output directory for exportation [string]
+    output_directory = OUTPUT_DIRECTORY_DEFAULT
+    # Common dictionary to command-line and TOML file.
+    config_dict = {
+        "params": {
+            # Define which from Inkscape or LaTeX will render the fonts ["latex" | "inkscape"]
+            "fonts_engine": FONTS_ENGINE_DEFAULT,
+        },
+        # Defines series of fragments exportation
+        # [{"name": "NAME", "excluded_id": ["step1", "step3", "step3"]}]
+        "fragments": None,
+    }
+
+    # Methods ==================================================================
+
+    def __init__(self, input_file):
+        """Initialize an exporter configuration with an input file and default values."""
+        # Get an input file
+        self.input_file = input_file
+
+    def load_toml(self):
+        """Load a configuration from a sidecar TOML file."""
+        # If found a corresponding TOML file, load it.
+        config_file_name = self.input_file.replace(".svg", ".toml")
+        if path.exists(config_file_name):
+            LOGGER.info("Loading...: {}".format(config_file_name))
+            with open(config_file_name, "rb") as f:
+                config_file_content = tomllib.load(f)
+        # Otherwise, silently ignore.
+        else:
+            return
+        # Update object configuration from the TOML configuration
+        self.config_dict.update(config_file_content)
+
+    def load_cli(self):
+        pass
+
+class InkscapeExporter():
+    """Inkscape Exporter configurable through InkscapeExporterConfig."""
+    def __init__(self):
+        pass
+
+class Inkscape2LaTeXLogger():
+    """Logger for Inkscape2LaTeX."""
+
+    FMT_INFO = "[%(levelname)s] %(name)s: %(message)s"
+    FMT_DEBUG = "[%(levelname)s] %(name)s.%(module)s: %(message)s"
+
+    def __init__(self, level):
+        assert level in [logging.INFO, logging.DEBUG]
+        # Create the logger
+        self.logger = logging.getLogger('inkscape2latex')
+        self.logger.setLevel(level)
+
+        # Create console handler and set level to debug
+        self.handler = logging.StreamHandler()
+        self.handler.setLevel(level)
+
+        # Create formatter
+        if level == logging.INFO:
+            fmt = Inkscape2LaTeXLogger.FMT_INFO
+        elif level == logging.DEBUG:
+            fmt = Inkscape2LaTeXLogger.FMT_DEBUG
+        else:
+            fmt = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+        self.formatter = logging.Formatter(fmt)
+
+        # Connect everything
+        self.handler.setFormatter(self.formatter)
+        self.logger.addHandler(self.handler)
+
+class Inkscape2LaTeXCLI:
+    """Command-line interface for Inkscape2LaTeX."""
+
+    def __init__(self):
+        """Initialize command-line interface."""
+        global LOGGER
+
+        # Command-line interface ===============================================
+
+        parser = argparse.ArgumentParser(
+            prog='inkscape2latex',
+            description='TODO'
+        )
+
+        parser.add_argument('FILE', help="Inkscape drawing in SVG format to export", type=str)
+
+        parser.add_argument('-v', '--verbosity',
+                            help="Increase verbosity if set", action="store_true")
+        parser.add_argument("-o", "--output-dir", type=str, help="Set the output directory [default = .]")
+
+        self.args = parser.parse_args()
+
+        # Logging interface ====================================================
+
+        if self.args.verbosity:
+            level = logging.DEBUG
+        else:
+            level = logging.INFO
+        # Create the logger
+        self.applogger = Inkscape2LaTeXLogger(level)
+        # Use a shortcut variable
+        LOGGER = self.applogger.logger
+
+    def run(self):
+        """Execute the command-line."""
+        # Check user-input consistency
+        if not path.exists(self.args.FILE):
+            LOGGER.critical("{} not found!".Format(self.args.FILE))
+
+        # Create the configuration for the exportation
+        config = InkscapeExporterConfig(input_file=self.args.FILE)
+        config.load_toml()
+        config.load_cli()
+
+        # Create and the exportation
+        # TODO
+        
+if __name__ == "__main__":
+    inkscape2latexcli = Inkscape2LaTeXCLI()
+    inkscape2latexcli.run()
