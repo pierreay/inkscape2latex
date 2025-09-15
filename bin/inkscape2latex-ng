@@ -152,8 +152,8 @@ class Inkscape2LaTeXCLI:
                             help="Set the output directory [default = {}]".format(InkscapeExporterConfig.OUTPUT_DIR_DEFAULT))
         parser.add_argument("--fonts-engine", type=str, choices=["latex", "inkscape"], default=None,
                             help="Set the font rendering engine [default = {}]".format(InkscapeExporterConfig.FONTS_ENGINE_DEFAULT))
-        parser.add_argument("--fragments", action="store_true", default=None,
-                            help="Enable fragments exportation instead of full exportation")
+        parser.add_argument("--fragments", action=argparse.BooleanOptionalAction, default=None,
+                            help="Enable (or disable) fragments exportation (instead of full exportation) [default = {}]".format(InkscapeExporterConfig.FRAGMENTS_DEFAULT))
 
         self.args = parser.parse_args()
 
