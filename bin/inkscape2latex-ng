@@ -10,6 +10,7 @@ import sys
 import argparse
 import logging
 import tomllib
+import subprocess
 
 LOGGER = None
 
@@ -22,20 +23,27 @@ class InkscapeExporterConfig():
     # Constants ================================================================
 
     # Export all the area defining the page.
-    INKSCAPE_OPT_AREA    = "--export-area-page"
+    INKSCAPE_OPT_AREA = "--export-area-page"
     # Export in PDF rather than EPS.
-    INKSCAPE_OPT_TYPE    = "--export-type=pdf"
+    INKSCAPE_OPT_TYPE = "--export-type=pdf"
+    # Export with sidecar `pdf_tex` file such that LaTeX will render fonts during compilation.
+    INKSCAPE_OPT_FONTS_LATEX = "--export-latex"
     # Export in current working directroy by default.
-    OUTPUT_DIR_DEFAULT   = "."
+    OUTPUT_DIR_DEFAULT = "."
+    # Templates for output file based on exportation mode.
+    OUTPUT_FILE_FULL_TEMPLATE = "{}.pdf"
+    OUTPUT_FILE_FRAGMENTS_TEMPLATE = "{}@{}.pdf"
     # Let Inkscape render fonts by default.
     FONTS_ENGINE_DEFAULT = "inkscape"
     # By default, performs a full exportation instead of fragments
-    FRAGMENTS_DEFAULT    = False
+    FRAGMENTS_DEFAULT = False
 
     # Runtime variables ========================================================
 
     # Input SVG file to export [string]
-    input_file       = None
+    input_file = None
+    # Basename of input file (without leading directories and extension) [string]
+    input_file_basename = None
     # Output directory for exportation [string]
     output_dir = OUTPUT_DIR_DEFAULT
 
@@ -58,6 +66,8 @@ class InkscapeExporterConfig():
         """Initialize an exporter configuration with an input file and default values."""
         # Get an input file
         self.input_file = input_file
+        # Derive basename
+        self.input_file_basename = path.splitext(path.basename(self.input_file))[0]
 
     def load_toml(self):
         """Load a configuration from a sidecar TOML file."""
@@ -98,7 +108,38 @@ class InkscapeExporterConfig():
 
 class InkscapeExporter():
     """Inkscape Exporter configurable through InkscapeExporterConfig."""
-    def __init__(self):
+
+    def __init__(self, config):
+        assert type(config) == InkscapeExporterConfig
+        self.config = config
+
+    def run(self):
+        """Run the exportation based on registered config"""
+        if not self.config.config_dict["params"]["fragments"]:
+            self._export_full()   
+        else:
+            self._export_fragments()
+
+    def _export_full(self):
+        """Export an Inkscape SVG in full mode"""
+        # Build exportation option string based on configuration
+        inkscape_opts = [InkscapeExporterConfig.INKSCAPE_OPT_AREA, InkscapeExporterConfig.INKSCAPE_OPT_TYPE]
+        if self.config.config_dict["params"]["fonts_engine"] == "latex":
+            inkscape_opts += [InkscapeExporterConfig.INKSCAPE_OPT_FONTS_LATEX]
+        # Build output filename
+        output_file = "{}/{}".format(
+            self.config.output_dir,
+            InkscapeExporterConfig.OUTPUT_FILE_FULL_TEMPLATE.format(self.config.input_file_basename)
+        )
+        # Build command-line
+        cmdline = ["inkscape"] + inkscape_opts + ["--export-filename={}".format(output_file), self.config.input_file]
+        # Run the exportation
+        LOGGER.info("Run exportation for {}".format(self.config.input_file))
+        LOGGER.debug("Run: {}".format(cmdline))
+        subprocess.run(cmdline)
+
+    def _export_fragments(self):
+        """Export an Inkscape SVG in fragments mode"""
         pass
 
 class Inkscape2LaTeXLogger():
@@ -194,7 +235,8 @@ class Inkscape2LaTeXCLI:
             LOGGER.debug(config)
 
         # Create and the exportation
-        # TODO
+        exporter = InkscapeExporter(config)
+        exporter.run()
         
 if __name__ == "__main__":
     inkscape2latexcli = Inkscape2LaTeXCLI()
