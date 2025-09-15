@@ -172,7 +172,11 @@ class Inkscape2LaTeXCLI:
         """Execute the command-line."""
         # Check user-input consistency
         if not path.exists(self.args.FILE):
-            LOGGER.critical("{} not found!".Format(self.args.FILE))
+            LOGGER.critical("{} not found!".format(self.args.FILE))
+            sys.exit(1)
+        if not path.splitext(self.args.FILE)[1] == ".svg":
+            LOGGER.critical("{} not an SVG!".format(self.args.FILE))
+            sys.exit(1)
 
         # Create the configuration for the exportation
         config = InkscapeExporterConfig(input_file=self.args.FILE)
