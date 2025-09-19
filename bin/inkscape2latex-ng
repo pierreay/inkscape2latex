@@ -97,6 +97,28 @@ class InkscapeExporterConfig():
         if fragments is not None:
             self.config_dict["params"]["fragments"] = fragments
 
+    def generate_toml_template(self):
+        """Generate a template TOML configuration file for the current input file"""
+        # Define output file and template to write into
+        output_file = self.input_file.replace(".svg", ".toml")
+        template = '[params]\n' \
+            + '# Set the font rendering engine [latex | inkscape]\n' \
+            + 'fonts_engine = "inkscape"\n' \
+            + '# Enable or disable fragments exportation\n' \
+            + 'fragments = false\n' \
+            + '\n' \
+            + '# Define the fragment exportation NAME1\n' \
+            + '[fragments.NAME1]\n' \
+            + 'excluded_layers = ["LAYER1", "LAYER2"]\n' \
+            + '\n' \
+            + '# Define the fragment exportation NAME2\n' \
+            + '[fragments.NAME2]\n' \
+            + 'excluded_layers = ["LAYER2", "LAYER3"]'
+        # Perform the writing
+        LOGGER.info("Generate template TOML configuration file: {}".format(output_file))
+        with open(output_file, "w", encoding="utf-8") as f:
+            f.write(template)
+
     def __str__(self):
         """Return a textual representation of the current configuration"""
         return "\n[v] input_file={}\n[v] output_dir={}\n[v] config_dict={}".format(
@@ -220,6 +242,8 @@ class Inkscape2LaTeXCLI:
                             help="Increase verbosity if set")
         parser.add_argument("-o", "--output-dir", type=str, default=None,
                             help="Set the output directory [default = {}]".format(InkscapeExporterConfig.OUTPUT_DIR_DEFAULT))
+        parser.add_argument("--generate", action="store_true",
+                            help="Generate a TOML template configuration file for input SVG file")
         parser.add_argument("--fonts-engine", type=str, choices=["latex", "inkscape"], default=None,
                             help="Set the font rendering engine [default = {}]".format(InkscapeExporterConfig.FONTS_ENGINE_DEFAULT))
         parser.add_argument("--fragments", action=argparse.BooleanOptionalAction, default=None,
@@ -248,9 +272,17 @@ class Inkscape2LaTeXCLI:
             LOGGER.critical("{} not an SVG!".format(self.args.FILE))
             sys.exit(1)
 
-        # Create the configuration for the exportation
+        # Create the configuration for the input file
         config = InkscapeExporterConfig(input_file=self.args.FILE)
-        # By default, load from TOML if detected 
+
+        # Special options acting as commands that differs from exportation 
+        if self.args.generate:
+            config.generate_toml_template()
+            exit(0)
+
+        # From here, we are going to perform an expotation
+
+        # By default, load from TOML if detected
         config.load_toml()
         if self.args.verbose:
             LOGGER.debug(config)
@@ -263,7 +295,7 @@ class Inkscape2LaTeXCLI:
         if self.args.verbose:
             LOGGER.debug(config)
 
-        # Create and the exportation
+        # Create and run the exportation
         exporter = InkscapeExporter(config)
         exporter.run()
 

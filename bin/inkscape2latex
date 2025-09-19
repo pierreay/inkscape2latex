@@ -5,7 +5,6 @@
 # Date: 2025-09-13
 
 # TODO: Parse the SVG to automatically set layers' id from tags instead of having of doing it manually
-# TODO: Add a command to init a layerfile.
 
 # Do not open any Inkscape loading popup.
 # Side effect: display a harmless GTK warning, see:
