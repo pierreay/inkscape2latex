@@ -1,0 +1,15 @@
+[params]
+fonts_engine = "inkscape"
+fragments = true
+
+[fragments.step1]
+excluded_layers = ["step2", "step3"]
+
+[fragments.step2]
+excluded_layers = ["step1", "step3"]
+
+[fragments.step3]
+excluded_layers = ["step1", "step2"]
+
+[fragments.all]
+excluded_layers = []

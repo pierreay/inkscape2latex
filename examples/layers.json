@@ -1,7 +1,0 @@
-{
-    "figure.svg": [
-        {"name": "step1", "excluded-layers": "step2,step3"},
-        {"name": "step2", "excluded-layers": "step3"},
-        {"name": "step3", "excluded-layers": ""}
-    ]
-}
