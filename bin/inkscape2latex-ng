@@ -2,7 +2,7 @@
 
 # Program: inkscape2latex-ng
 # Author: Pierre Ayoub
-# Date: 2025-09-13
+# Date: 2025-09-19
 # Template UUID: b4b9d863-051e-494d-a98b-22b9d0ee4727
 
 from os import path
@@ -119,7 +119,7 @@ class InkscapeExporter():
 
     def run(self):
         """Run the exportation based on registered config"""
-        LOGGER.info("Run exportation for {}".format(self.config.input_file))
+        LOGGER.info("Run exportation: {}".format(self.config.input_file))
         if not self.config.config_dict["params"]["fragments"]:
             self._export_full()   
         else:
@@ -157,10 +157,15 @@ class InkscapeExporter():
             )
             # Get layers that should be excluded from current fragment
             excluded_layers = self.config.config_dict["fragments"][fragment]["excluded_layers"]
-            # Build command-line
+            # Based on that list, build the Inkscape actions that should be used to exclude those layers
+            if len(excluded_layers) >= 1:
+                inkscape_actions = ["--actions=select-by-id:{};delete-selection;export-do".format(",".join(excluded_layers))]
+            else:
+                inkscape_actions = []
+            # Build final command-line
             cmdline = ["inkscape"] \
                 + inkscape_opts \
-                + ["--actions=select-by-id:{};delete-selection;export-do".format(",".join(excluded_layers))] \
+                + inkscape_actions \
                 + ["--export-filename={}".format(output_file), self.config.input_file]
             # Run the exportation
             LOGGER.debug("Run: {}".format(cmdline))
