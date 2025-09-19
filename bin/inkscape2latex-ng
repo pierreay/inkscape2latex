@@ -89,7 +89,7 @@ class InkscapeExporterConfig():
         Purpose is to configure manually for testing purpose or overriding after loading from a TOML file.
 
         """
-        LOGGER.debug("Loading configuration from command-line")
+        LOGGER.debug("Loading configuration from: {}".format(sys.argv))
         if output_dir is not None:
             self.output_dir = output_dir
         if fonts_engine is not None:
@@ -109,12 +109,17 @@ class InkscapeExporterConfig():
 class InkscapeExporter():
     """Inkscape Exporter configurable through InkscapeExporterConfig."""
 
+    # Configuration [InkscapeExporterConfig]
+    config = None
+
     def __init__(self, config):
         assert type(config) == InkscapeExporterConfig
+        # Get the configuration
         self.config = config
 
     def run(self):
         """Run the exportation based on registered config"""
+        LOGGER.info("Run exportation for {}".format(self.config.input_file))
         if not self.config.config_dict["params"]["fragments"]:
             self._export_full()   
         else:
@@ -134,13 +139,32 @@ class InkscapeExporter():
         # Build command-line
         cmdline = ["inkscape"] + inkscape_opts + ["--export-filename={}".format(output_file), self.config.input_file]
         # Run the exportation
-        LOGGER.info("Run exportation for {}".format(self.config.input_file))
         LOGGER.debug("Run: {}".format(cmdline))
         subprocess.run(cmdline)
 
     def _export_fragments(self):
         """Export an Inkscape SVG in fragments mode"""
-        pass
+        # Build exportation option string based on configuration
+        inkscape_opts = [InkscapeExporterConfig.INKSCAPE_OPT_AREA, InkscapeExporterConfig.INKSCAPE_OPT_TYPE]
+        # Iterate over all fragments
+        for fragment in self.config.config_dict["fragments"]:
+            # Build output filename
+            output_file = "{}/{}".format(
+                self.config.output_dir,
+                InkscapeExporterConfig.OUTPUT_FILE_FRAGMENTS_TEMPLATE.format(
+                    self.config.input_file_basename,
+                    fragment)
+            )
+            # Get layers that should be excluded from current fragment
+            excluded_layers = self.config.config_dict["fragments"][fragment]["excluded_layers"]
+            # Build command-line
+            cmdline = ["inkscape"] \
+                + inkscape_opts \
+                + ["--actions=select-by-id:{};delete-selection;export-do".format(",".join(excluded_layers))] \
+                + ["--export-filename={}".format(output_file), self.config.input_file]
+            # Run the exportation
+            LOGGER.debug("Run: {}".format(cmdline))
+            subprocess.run(cmdline)
 
 class Inkscape2LaTeXLogger():
     """Logger for Inkscape2LaTeX."""
@@ -237,7 +261,7 @@ class Inkscape2LaTeXCLI:
         # Create and the exportation
         exporter = InkscapeExporter(config)
         exporter.run()
-        
+
 if __name__ == "__main__":
     inkscape2latexcli = Inkscape2LaTeXCLI()
     inkscape2latexcli.run()
