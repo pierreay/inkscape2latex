@@ -1,0 +1,11 @@
+# Reliability
+
+- If Inkscape crash (*e.g.*, when exportation occurs in parallel)
+    - Implement an "execute and retry" mechanism
+        - Random sleep between retries
+        - Stop retrying after defined number of fails
+    - Implement an Inkscape logging mechanism
+        - Log output of Inkscape into a temporary log file 
+        - Display its content if `-v` is passed on command line
+        - Parse the logging output of Inkscape to detect an error
+            - Use following regex `'parse rerror|failed to create document'`

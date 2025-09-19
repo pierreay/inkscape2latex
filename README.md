@@ -1,13 +1,50 @@
 # Inkscape2LaTeX
 
-The Inkscape exporter designed for LaTeX projects.
+A command-line Inkscape exporter which is Makefile and LaTeX friendly.
 
-This is a small Bash utility that take an SVG draw to export it in PDF or EPS.
+This is a Python utility that take an SVG draw to export it in PDF.
 The export can be configured such as:
 - The fonts can be rendered by Inkscape during the export of by LaTeX during the compilation of the document,
-- The figure can be exported in multiple fragments depending on objects identifiers.
+- The figure can be exported entirely (full mode) or in multiple fragments depending on layers identifiers.
 
-The fragment export feature allows to create animated slides using Beamer.
+The fragment export feature allows to create animated slides, *e.g.*, using Beamer.
+
+# Features
+
+- Command-line interface
+- Optional per-figure TOML configuration file
+- Two different exportation mode, full or fragments
+- Project-wide or system-wide installation
+- Out-of-tree exportation
+
+# Usage
+
+## Command-line
+
+<!-- TODO: Dump of old Bash help. Write a step by step guide (with one summary screenshot ?) -->
+
+The source file (INFILE) should be an SVG.
+
+If --inkscape-fonts is not passed, the SVG which will be exported in two files:
+- An output file excluding text (OUTFILE).
+- An sidecar TeX file including text (OUTFILE_tex).
+The figure can be included into LaTex using the '\input{OUTFILE.pdf_tex}' command.
+
+If --inkscape-fonts is passed, the SVG which will be exported in one file:
+- An output file including text (OUTFILE).
+The figure can be included into LaTex using the '\includegraphics{OUTFILE.(pdf}' command.
+
+Optionnaly:
+- The script can export multiple layer combinations of the input.
+- The supported filetypes for the output is PDF.
+    pdf: Portable Document Format (PDF) 
+        Support transparancy and page area export.
+
+## Makefile
+
+Inkscape2LaTeX is also suitable to be used inside a Makefile.
+It allows automatic exportation and dependency handling, and to be included inside any LaTeX build system.
+See the self-documented example under [examples/Makefile](./examples/Makefile).
 
 # Installation
 
@@ -101,8 +138,3 @@ Options:
 Examples:
 $ inkscape2latex -l utils/layers.json gfx/inkscape/drawing.svg build/gfx/inkscape/drawing.pdf
 ```
-
-## Makefile
-
-Inkscape2LaTeX is also suitable to be used inside a Makefile for automatic dependency handling.
-See the example under [examples/Makefile](./examples/Makefile).
