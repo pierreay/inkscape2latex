@@ -4,6 +4,7 @@
 
 # Standard imports
 import subprocess
+import logging
 
 # Module logger
 LOGGER = logging.getLogger(__name__)

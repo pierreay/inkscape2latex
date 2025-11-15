@@ -6,6 +6,7 @@
 from os import path
 import sys
 import tomllib
+import logging
 
 # Module logger
 LOGGER = logging.getLogger(__name__)
@@ -56,6 +57,31 @@ class InkscapeExporterConfig():
         "fragments": None,
     }
 
+    # Functions ================================================================
+
+    @staticmethod
+    def generate_toml_template(input_file):
+        """Generate a template TOML configuration file for a given input file"""
+        # Define output file and template to write into
+        output_file = input_file.replace(".svg", ".toml")
+        template = '[params]\n' \
+            + '# Set the font rendering engine [latex | inkscape]\n' \
+            + 'fonts_engine = "inkscape"\n' \
+            + '# Enable or disable fragments exportation\n' \
+            + 'fragments = false\n' \
+            + '\n' \
+            + '# Define the fragment exportation NAME1\n' \
+            + '[fragments.NAME1]\n' \
+            + 'excluded_layers = ["LAYER1", "LAYER2"]\n' \
+            + '\n' \
+            + '# Define the fragment exportation NAME2\n' \
+            + '[fragments.NAME2]\n' \
+            + 'excluded_layers = ["LAYER2", "LAYER3"]'
+        # Perform the writing
+        LOGGER.info("Generate template TOML configuration file: {}".format(output_file))
+        with open(output_file, "w", encoding="utf-8") as f:
+            f.write(template)
+
     # Methods ==================================================================
 
     def __init__(self, input_file):
@@ -92,28 +118,6 @@ class InkscapeExporterConfig():
             self.config_dict["params"]["fonts_engine"] = fonts_engine
         if fragments is not None:
             self.config_dict["params"]["fragments"] = fragments
-
-    def generate_toml_template(self):
-        """Generate a template TOML configuration file for the current input file"""
-        # Define output file and template to write into
-        output_file = self.input_file.replace(".svg", ".toml")
-        template = '[params]\n' \
-            + '# Set the font rendering engine [latex | inkscape]\n' \
-            + 'fonts_engine = "inkscape"\n' \
-            + '# Enable or disable fragments exportation\n' \
-            + 'fragments = false\n' \
-            + '\n' \
-            + '# Define the fragment exportation NAME1\n' \
-            + '[fragments.NAME1]\n' \
-            + 'excluded_layers = ["LAYER1", "LAYER2"]\n' \
-            + '\n' \
-            + '# Define the fragment exportation NAME2\n' \
-            + '[fragments.NAME2]\n' \
-            + 'excluded_layers = ["LAYER2", "LAYER3"]'
-        # Perform the writing
-        LOGGER.info("Generate template TOML configuration file: {}".format(output_file))
-        with open(output_file, "w", encoding="utf-8") as f:
-            f.write(template)
 
     def __str__(self):
         """Return a textual representation of the current configuration"""

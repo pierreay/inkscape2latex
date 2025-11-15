@@ -15,11 +15,11 @@ from scapex.config import InkscapeExporterConfig
 # Module logger
 LOGGER = logging.getLogger(__name__)
 
-class ScapeXCLI:
-    """Command-line interface for ScapeX."""
+class CLI:
+    """Command-line interface"""
 
     def __init__(self):
-        """Initialize command-line interface."""
+        """Initialize command-line interface and set log level"""
 
         # Setup command-line interface =========================================
 
@@ -50,10 +50,10 @@ class ScapeXCLI:
         else:
             level = logging.INFO
         APPLOGGER.set_level(level)
-        LOGGER.debug("Debug mode enabled!")
+        LOGGER.debug("Debug mode enabled!") # Will be printed only if DEBUG level is set
 
     def run(self):
-        """Execute the command-line."""
+        """Execute the command-line"""
         # Check user-input consistency
         if not path.exists(self.args.FILE):
             LOGGER.critical("{} not found!".format(self.args.FILE))
@@ -62,42 +62,41 @@ class ScapeXCLI:
             LOGGER.critical("{} not an SVG!".format(self.args.FILE))
             sys.exit(1)
 
+        # Process special options acting as subcommands
+        # that differs from main command (exportation)
+        # ----------------------------------------------------------------------
+
+        if self.args.generate:
+            InkscapeExporterConfig.generate_toml_template(self.args.FILE)
+            exit(0)
+
+        # From here, we are going to perform an exportation
+        # ----------------------------------------------------------------------
+
         # Create the configuration for the input file
         config = InkscapeExporterConfig(input_file=self.args.FILE)
 
-        # ** Special options acting as commands that differs from exportation 
-
-        if self.args.generate:
-            config.generate_toml_template()
-            exit(0)
-
-        # ** From here, we are going to perform an exportation
-
         # By default, load from TOML if detected
         config.load_toml()
-        if self.args.verbose:
-            LOGGER.debug(config)
+        LOGGER.debug(config)
+
         # Override with command-line parameters
         config.load_args(
             output_dir=self.args.output_dir,
             fonts_engine=self.args.fonts_engine,
             fragments=self.args.fragments
         )
-        if self.args.verbose:
-            LOGGER.debug(config)
+        LOGGER.debug(config)
 
         # Create and run the exportation
         exporter = InkscapeExporter(config)
         exporter.run()
 
-# Main function of our package.
-# NOTE: The "main" name is only a convention here.
+# Main function of our package
 def main():
-    # print("Call mylib.hello_world() from 'cli.py'...")
-    # mylib.hello_world()
-    scapexcli = ScapeXCLI()
-    scapexcli.run()
+    cli = CLI()
+    cli.run()
 
-# Interpreter entrypoint.
+# Interpreter entrypoint
 if __name__ == "__main__":
     main()
