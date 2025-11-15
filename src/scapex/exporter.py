@@ -49,6 +49,9 @@ class Exporter():
         """Export an Inkscape SVG in fragments mode"""
         # Build exportation option string based on configuration
         inkscape_opts = [ExporterConfig.INKSCAPE_OPT_AREA, ExporterConfig.INKSCAPE_OPT_TYPE]
+        if self.config.config_dict["params"]["fonts_engine"] == "latex":
+            inkscape_opts += [ExporterConfig.INKSCAPE_OPT_FONTS_LATEX]
+
         # Iterate over all fragments
         for fragment in self.config.config_dict["fragments"]:
             # Build output filename
