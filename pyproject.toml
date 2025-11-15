@@ -16,9 +16,9 @@ version = "0.0.1"
 
 # Scripts configuration.
 [project.scripts]
-# Will create a "scapex-cli" Bash script targeting the "scapex" package, "mymod"
+# Will create a "scapex-cli" Bash script targeting the "scapex" package, "cli"
 # module, "main()" function.
-scapex-cli = "scapex.mymod:main"
+scapex-cli = "scapex.cli:main"
 
 # Package layout.
 # NOTE: Disabling the following options will enable the automatic package

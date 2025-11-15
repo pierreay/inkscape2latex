@@ -8,7 +8,7 @@ from scapex import mylib
 # Main function of our package.
 # NOTE: The "main" name is only a convention here.
 def main():
-    print("Call mylib.hello_world() from 'mymod.py'...")
+    print("Call mylib.hello_world() from 'cli.py'...")
     mylib.hello_world()
 
 # Interpreter entrypoint.

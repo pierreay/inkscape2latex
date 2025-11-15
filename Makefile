@@ -4,7 +4,7 @@
 PKG_NAME=scapex
 
 # Main module name.
-MOD_NAME=mymod
+MOD_NAME=cli
 
 # Package directory.
 # NOTE: This corresponds to the so-called "src" layout of Python documentation.
