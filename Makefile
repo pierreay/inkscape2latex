@@ -16,15 +16,15 @@ PYSHELL=python # [python | ipython]
 # * Running
 
 # Run the package main function as a module and exit.
-run-once:
+run/once:
 	PYTHONPATH=$(PKG_DIR) $(PYSHELL) -c "from $(PKG_NAME) import $(MOD_NAME); $(MOD_NAME).main();"
 
 # Import the package main module and gives an interactive REPL.
-run-repl:
+run/repl:
 	PYTHONPATH=$(PKG_DIR) $(PYSHELL) -i -c "from $(PKG_NAME) import $(MOD_NAME);"
 
 # Run the package main module as a script.
-run-script:
+run/script:
 	PYTHONPATH=$(PKG_DIR) $(PKG_DIR)/$(PKG_NAME)/$(MOD_NAME).py
 
 # * Testing

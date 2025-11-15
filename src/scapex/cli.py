@@ -1,15 +1,106 @@
 #!/usr/bin/env python3
 
-"""My module."""
+"""Command-line interface module."""
+
+# Standard imports
+from os import path
+import sys
+import argparse
+import logging
 
 # Import a package module.
 from scapex import mylib
+from scapex.config import InkscapeExporterConfig
+from scapex.log import ScapeXLogger, LOGGER
+
+# TODO: Should go into log.py?
+LOGGER = None
+
+class ScapeXCLI:
+    """Command-line interface for ScapeX."""
+
+    def __init__(self):
+        """Initialize command-line interface."""
+        global LOGGER
+
+        # Command-line interface ===============================================
+
+        parser = argparse.ArgumentParser(
+            prog='scapex',
+            description='TODO'
+        )
+
+        parser.add_argument('FILE', help="Inkscape drawing in SVG format to export", type=str)
+
+        parser.add_argument('-v', '--verbose', default=False, action="store_true",
+                            help="Increase verbosity if set")
+        parser.add_argument("-o", "--output-dir", type=str, default=None,
+                            help="Set the output directory [default = {}]".format(InkscapeExporterConfig.OUTPUT_DIR_DEFAULT))
+        parser.add_argument("--generate", action="store_true",
+                            help="Generate a TOML template configuration file for input SVG file")
+        parser.add_argument("--fonts-engine", type=str, choices=["latex", "inkscape"], default=None,
+                            help="Set the font rendering engine [default = {}]".format(InkscapeExporterConfig.FONTS_ENGINE_DEFAULT))
+        parser.add_argument("--fragments", action=argparse.BooleanOptionalAction, default=None,
+                            help="Enable (or disable) fragments exportation (instead of full exportation) [default = {}]".format(InkscapeExporterConfig.FRAGMENTS_DEFAULT))
+
+        self.args = parser.parse_args()
+
+        # Logging interface ====================================================
+
+        if self.args.verbose:
+            level = logging.DEBUG
+        else:
+            level = logging.INFO
+        # Create the logger
+        self.applogger = ScapeXLogger(level)
+        # Use a shortcut variable
+        LOGGER = self.applogger.logger
+
+    def run(self):
+        """Execute the command-line."""
+        # Check user-input consistency
+        if not path.exists(self.args.FILE):
+            LOGGER.critical("{} not found!".format(self.args.FILE))
+            sys.exit(1)
+        if not path.splitext(self.args.FILE)[1] == ".svg":
+            LOGGER.critical("{} not an SVG!".format(self.args.FILE))
+            sys.exit(1)
+
+        # Create the configuration for the input file
+        config = InkscapeExporterConfig(input_file=self.args.FILE)
+
+        # ** Special options acting as commands that differs from exportation 
+
+        if self.args.generate:
+            config.generate_toml_template()
+            exit(0)
+
+        # ** From here, we are going to perform an exportation
+
+        # By default, load from TOML if detected
+        config.load_toml()
+        if self.args.verbose:
+            LOGGER.debug(config)
+        # Override with command-line parameters
+        config.load_args(
+            output_dir=self.args.output_dir,
+            fonts_engine=self.args.fonts_engine,
+            fragments=self.args.fragments
+        )
+        if self.args.verbose:
+            LOGGER.debug(config)
+
+        # Create and run the exportation
+        exporter = InkscapeExporter(config)
+        exporter.run()
 
 # Main function of our package.
 # NOTE: The "main" name is only a convention here.
 def main():
-    print("Call mylib.hello_world() from 'cli.py'...")
-    mylib.hello_world()
+    # print("Call mylib.hello_world() from 'cli.py'...")
+    # mylib.hello_world()
+    scapexcli = ScapeXCLI()
+    scapexcli.run()
 
 # Interpreter entrypoint.
 if __name__ == "__main__":
