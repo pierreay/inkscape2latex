@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-"""Logging module.
+"""Logging module
 
 Provides an application logger and a testing interface.
 """
@@ -9,10 +9,12 @@ Provides an application logger and a testing interface.
 import logging
 
 # Package imports
-from scapex import PACKAGE_NAME
+# NOTE: Do not use `scapex.constants` to NOT run `__init__.py` when `__name__ == "__main__"`
+# Otherwise, when testing this module, two loggers are initialized
+from constants import PACKAGE_NAME
 
 class AppLogger():
-    """Application logger.
+    """Application logger
 
     Class storing the Logger, the Handler and the Formatter configured 
     accordingly to our preferences.
@@ -28,7 +30,7 @@ class AppLogger():
     formatter_debug = None  # logging.Formatter object
 
     def __init__(self, level = None):
-        """Initialize the application logger with its Logger, Handler and Formatters."""
+        """Initialize the application logger with its Logger, Handler and Formatters"""
         assert level is None or level in [logging.INFO, logging.DEBUG]
 
         # Create the formatters
