@@ -21,7 +21,7 @@ except ModuleNotFoundError:
 class AppLogger():
     """Application logger
 
-    Class storing the Logger, the Handler and the Formatter configured 
+    Class storing the Logger, the Handler and the Formatter configured
     accordingly to our preferences.
     """
 

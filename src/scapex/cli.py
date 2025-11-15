@@ -10,7 +10,7 @@ import logging
 
 # Package module imports
 from scapex import APPLOGGER
-from scapex.config import InkscapeExporterConfig
+from scapex.config import ExporterConfig
 
 # Module logger
 LOGGER = logging.getLogger(__name__)
@@ -33,13 +33,13 @@ class CLI:
         parser.add_argument('-v', '--verbose', default=False, action="store_true",
                             help="Increase verbosity if set")
         parser.add_argument("-o", "--output-dir", type=str, default=None,
-                            help="Set the output directory [default = {}]".format(InkscapeExporterConfig.OUTPUT_DIR_DEFAULT))
+                            help="Set the output directory [default = {}]".format(ExporterConfig.OUTPUT_DIR_DEFAULT))
         parser.add_argument("--generate", action="store_true",
                             help="Generate a TOML template configuration file for input SVG file")
         parser.add_argument("--fonts-engine", type=str, choices=["latex", "inkscape"], default=None,
-                            help="Set the font rendering engine [default = {}]".format(InkscapeExporterConfig.FONTS_ENGINE_DEFAULT))
+                            help="Set the font rendering engine [default = {}]".format(ExporterConfig.FONTS_ENGINE_DEFAULT))
         parser.add_argument("--fragments", action=argparse.BooleanOptionalAction, default=None,
-                            help="Enable (or disable) fragments exportation (instead of full exportation) [default = {}]".format(InkscapeExporterConfig.FRAGMENTS_DEFAULT))
+                            help="Enable (or disable) fragments exportation (instead of full exportation) [default = {}]".format(ExporterConfig.FRAGMENTS_DEFAULT))
 
         self.args = parser.parse_args()
 
@@ -67,14 +67,14 @@ class CLI:
         # ----------------------------------------------------------------------
 
         if self.args.generate:
-            InkscapeExporterConfig.generate_toml_template(self.args.FILE)
+            ExporterConfig.generate_toml_template(self.args.FILE)
             exit(0)
 
         # From here, we are going to perform an exportation
         # ----------------------------------------------------------------------
 
         # Create the configuration for the input file
-        config = InkscapeExporterConfig(input_file=self.args.FILE)
+        config = ExporterConfig(input_file=self.args.FILE)
 
         # By default, load from TOML if detected
         config.load_toml()
@@ -89,7 +89,7 @@ class CLI:
         LOGGER.debug(config)
 
         # Create and run the exportation
-        exporter = InkscapeExporter(config)
+        exporter = Exporter(config)
         exporter.run()
 
 # Main function of our package

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-"""Exporter module."""
+"""Inkscape exporter module"""
 
 # Standard imports
 import subprocess
@@ -9,14 +9,14 @@ import logging
 # Module logger
 LOGGER = logging.getLogger(__name__)
 
-class InkscapeExporter():
-    """Inkscape Exporter configurable through InkscapeExporterConfig."""
+class Exporter():
+    """Inkscape Exporter configurable through ExporterConfig."""
 
-    # Configuration [InkscapeExporterConfig]
+    # Configuration [ExporterConfig]
     config = None
 
     def __init__(self, config):
-        assert type(config) == InkscapeExporterConfig
+        assert type(config) == ExporterConfig
         # Get the configuration
         self.config = config
 
@@ -31,13 +31,13 @@ class InkscapeExporter():
     def _export_full(self):
         """Export an Inkscape SVG in full mode"""
         # Build exportation option string based on configuration
-        inkscape_opts = [InkscapeExporterConfig.INKSCAPE_OPT_AREA, InkscapeExporterConfig.INKSCAPE_OPT_TYPE]
+        inkscape_opts = [ExporterConfig.INKSCAPE_OPT_AREA, ExporterConfig.INKSCAPE_OPT_TYPE]
         if self.config.config_dict["params"]["fonts_engine"] == "latex":
-            inkscape_opts += [InkscapeExporterConfig.INKSCAPE_OPT_FONTS_LATEX]
+            inkscape_opts += [ExporterConfig.INKSCAPE_OPT_FONTS_LATEX]
         # Build output filename
         output_file = "{}/{}".format(
             self.config.output_dir,
-            InkscapeExporterConfig.OUTPUT_FILE_FULL_TEMPLATE.format(self.config.input_file_basename)
+            ExporterConfig.OUTPUT_FILE_FULL_TEMPLATE.format(self.config.input_file_basename)
         )
         # Build command-line
         cmdline = ["inkscape"] + inkscape_opts + ["--export-filename={}".format(output_file), self.config.input_file]
@@ -48,13 +48,13 @@ class InkscapeExporter():
     def _export_fragments(self):
         """Export an Inkscape SVG in fragments mode"""
         # Build exportation option string based on configuration
-        inkscape_opts = [InkscapeExporterConfig.INKSCAPE_OPT_AREA, InkscapeExporterConfig.INKSCAPE_OPT_TYPE]
+        inkscape_opts = [ExporterConfig.INKSCAPE_OPT_AREA, ExporterConfig.INKSCAPE_OPT_TYPE]
         # Iterate over all fragments
         for fragment in self.config.config_dict["fragments"]:
             # Build output filename
             output_file = "{}/{}".format(
                 self.config.output_dir,
-                InkscapeExporterConfig.OUTPUT_FILE_FRAGMENTS_TEMPLATE.format(
+                ExporterConfig.OUTPUT_FILE_FRAGMENTS_TEMPLATE.format(
                     self.config.input_file_basename,
                     fragment)
             )

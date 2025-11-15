@@ -11,8 +11,8 @@ import logging
 # Module logger
 LOGGER = logging.getLogger(__name__)
 
-class InkscapeExporterConfig():
-    """Configuration for a `InkscapeExporter`.
+class ExporterConfig():
+    """Configuration for a `Exporter`.
 
     This can be configured from command-line or a sidecar TOML file on-disk.
 
