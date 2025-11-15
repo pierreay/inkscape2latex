@@ -74,9 +74,9 @@ class ExporterConfig():
 
         # Define template to write into output file
         template = '[params]\n' \
-            + '# Set the font rendering engine [latex | inkscape]\n' \
+            + '# Set the font rendering engine ["latex" | "inkscape"]\n' \
             + 'fonts_engine = "inkscape"\n' \
-            + '# Enable or disable fragments exportation\n' \
+            + '# Enable or disable fragments exportation [false | true]\n' \
             + 'fragments = false\n' \
             + '\n' \
             + '# Define the fragment exportation NAME1\n' \
