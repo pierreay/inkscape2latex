@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 src_path="$(realpath $(dirname ${0}))/../src"
-PYTHONPATH="${src_path}" "${src_path}/scapex/cli.py" "${*}"
+PYTHONPATH="${src_path}" "${src_path}/scapex/cli.py" "${@}"
 
 # Equivalent alternative:
 # PYTHONPATH="${src_path}" python -c "from scapex import cli; cli.main();" "${*}"
