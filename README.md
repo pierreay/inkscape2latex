@@ -1,4 +1,4 @@
-# Inkscape2LaTeX
+# ScapeX
 
 A command-line Inkscape exporter which is Makefile and LaTeX friendly.
 
@@ -42,7 +42,7 @@ Optionnaly:
 
 ## Makefile
 
-Inkscape2LaTeX is also suitable to be used inside a Makefile.
+ScapeX is also suitable to be used inside a Makefile.
 It allows automatic exportation and dependency handling, and to be included inside any LaTeX build system.
 See the self-documented example under [examples/Makefile](./examples/Makefile).
 
@@ -53,20 +53,20 @@ See the self-documented example under [examples/Makefile](./examples/Makefile).
 
 ## Project-wide
 
-Inkscape2LaTeX can be installed as a `git` submodule for a self-contained project.
-Here is an example installing it into `TOPLEVEL_PROJECT/modules/inkscape2latex`:
+ScapeX can be installed as a `git` submodule for a self-contained project.
+Here is an example installing it into `TOPLEVEL_PROJECT/modules/scapex`:
 
 ```bash
 cd TOPLEVEL_PROJECT && mkdir modules
-git submodule add https://github.com/pierreay/inkscape2latex modules/inkscape2latex
+git submodule add https://github.com/pierreay/scapex modules/scapex
 ``` 
 
-You have then to add `inkscape2latex/bin` into your `$PATH` using your preferred method.
+You have then to add `scapex/bin` into your `$PATH` using your preferred method.
 Here is an exemple:
 
 ```bash
 cat << EOF > .env
-export PATH="${PATH}${PATH+:}$(realpath modules/inkscape2latex/bin)"
+export PATH="${PATH}${PATH+:}$(realpath modules/scapex/bin)"
 EOF
 ```
 
@@ -78,20 +78,20 @@ source .env
 
 ## System-wide
 
-Inkscape2LaTeX can be installed system-wide for a single user.
-Here is an example installing it into `~/.local/src/inkscape2latex`:
+ScapeX can be installed system-wide for a single user.
+Here is an example installing it into `~/.local/src/scapex`:
 
 ```bash
 mkdir ~/.local/src && cd ~/.local/src
-git clone https://github.com/pierreay/inkscape2latex
+git clone https://github.com/pierreay/scapex
 ```
 
-You have then to add `inkscape2latex/bin` into your `$PATH` using your preferred method.
+You have then to add `scapex/bin` into your `$PATH` using your preferred method.
 Here is an exemple for Bash:
 
 ```bash
 cat << EOF >> ~/.bashrc
-export PATH="${PATH}${PATH+:}${HOME}/.local/src/inkscape2latex/bin"
+export PATH="${PATH}${PATH+:}${HOME}/.local/src/scapex/bin"
 EOF
 ```
 
@@ -99,11 +99,11 @@ EOF
 
 ## Command-line interface
 
-Inkscape2LaTeX can be used as the following:
+ScapeX can be used as the following:
 
 ```bash
-$ inkscape2latex --help
-Usage: inkscape2latex [-l LAYERFILE.json] [--inkscape-fonts] INFILE.svg OUTFILE.(pdf | eps)
+$ scapex --help
+Usage: scapex [-l LAYERFILE.json] [--inkscape-fonts] INFILE.svg OUTFILE.(pdf | eps)
 
 Export an Inkscape source file for LaTeX.
 
@@ -136,5 +136,5 @@ Options:
     --inkscape-fonts:   Font rendered by Inkscape intead of LaTeX.
 
 Examples:
-$ inkscape2latex -l utils/layers.json gfx/inkscape/drawing.svg build/gfx/inkscape/drawing.pdf
+$ scapex -l utils/layers.json gfx/inkscape/drawing.svg build/gfx/inkscape/drawing.pdf
 ```

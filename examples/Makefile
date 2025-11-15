@@ -1,4 +1,4 @@
-# Program: inkscape2latex-ng
+# Program: scapex
 # Author: Pierre Ayoub
 # Date: 2025-09-19
 
@@ -21,7 +21,7 @@ all: $(INKSCAPE_CONFIG_FILES) $(INKSCAPE_BUILD_FILES)
 
 # .svg -> {.pdf, .pdf_tex}
 $(INKSCAPE_BUILD_DIR)/%.$(INKSCAPE_BUILD_FT): %.svg
-	inkscape2latex-ng -o $(INKSCAPE_BUILD_DIR) $<
+	scapex -o $(INKSCAPE_BUILD_DIR) $<
 	touch $@
 
 # Create the build directory
@@ -30,7 +30,7 @@ $(INKSCAPE_BUILD_DIR):
 
 # Generate a default configuration file if not existing
 %.toml:
-	inkscape2latex-ng --generate $(patsubst %.toml,%.svg,$@)
+	scapex --generate $(patsubst %.toml,%.svg,$@)
 
 clean:
 	rm -f $(INKSCAPE_BUILD_FILES) \
