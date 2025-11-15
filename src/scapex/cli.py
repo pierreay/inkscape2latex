@@ -10,6 +10,7 @@ import logging
 
 # Package module imports
 from scapex import APPLOGGER
+from scapex.exporter import Exporter
 from scapex.config import ExporterConfig
 
 # Module logger
@@ -35,7 +36,7 @@ class CLI:
         parser.add_argument("-o", "--output-dir", type=str, default=None,
                             help="Set the output directory [default = {}]".format(ExporterConfig.OUTPUT_DIR_DEFAULT))
         parser.add_argument("--generate", action="store_true",
-                            help="Generate a TOML template configuration file for input SVG file")
+                            help="Generate a TOML template configuration file for input SVG file (instead of exporting)")
         parser.add_argument("--fonts-engine", type=str, choices=["latex", "inkscape"], default=None,
                             help="Set the font rendering engine [default = {}]".format(ExporterConfig.FONTS_ENGINE_DEFAULT))
         parser.add_argument("--fragments", action=argparse.BooleanOptionalAction, default=None,

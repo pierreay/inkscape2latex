@@ -6,6 +6,9 @@
 import subprocess
 import logging
 
+# Package module imports
+from scapex.config import ExporterConfig
+
 # Module logger
 LOGGER = logging.getLogger(__name__)
 
