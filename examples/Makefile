@@ -20,8 +20,8 @@ INKSCAPE_BUILD_FILES := $(patsubst ./%.svg,$(INKSCAPE_BUILD_DIR)/%.$(INKSCAPE_BU
 all: $(INKSCAPE_CONFIG_FILES) $(INKSCAPE_BUILD_FILES)
 
 # .svg -> {.pdf, .pdf_tex}
-$(INKSCAPE_BUILD_DIR)/%.$(INKSCAPE_BUILD_FT): %.svg
-	scapex -o $(INKSCAPE_BUILD_DIR) $<
+$(BUILD_DIR)/%.$(BUILD_FT): %.svg %.toml
+	scapex -o $(BUILD_DIR) $<
 	touch $@
 
 # Create the build directory
