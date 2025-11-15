@@ -1,28 +1,25 @@
-# Build system configuration.
+# This project use the `src` layout
+# See: https://setuptools.pypa.io/en/latest/userguide/package_discovery.html
+
+# Build system configuration
 [build-system]
 requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
-# Project metadata configuration.
+# Project metadata configuration
 [project]
 name = "scapex"
-version = "0.0.1"
+version = "0.1.0"
+# If any dependencies are added in the future, put them here
 # dependencies = [
 #     "click",
-#     "colorlog",
-#     "numpy",
-#     "matplotlib"
+#     "colorlog"
 # ]
 
-# Scripts configuration.
+# Scripts configuration
 [project.scripts]
-# Will create a "scapex-cli" Bash script targeting the "scapex" package, "cli"
-# module, "main()" function.
+# Will create a `scapex` Bash script, targeting
+# -> The `scapex` package
+# -> The `cli` module
+# -> The `main()` function
 scapex-cli = "scapex.cli:main"
-
-# Package layout.
-# NOTE: Disabling the following options will enable the automatic package
-# discovery of Setuptools. In this project, we use the "src" layout.
-# See: https://setuptools.pypa.io/en/latest/userguide/package_discovery.html
-# [options]
-# packages = scapex
