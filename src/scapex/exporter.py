@@ -5,6 +5,9 @@
 # Standard imports
 import subprocess
 
+# Module logger
+LOGGER = logging.getLogger(__name__)
+
 class InkscapeExporter():
     """Inkscape Exporter configurable through InkscapeExporterConfig."""
 

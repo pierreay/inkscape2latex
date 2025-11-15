@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-"""Command-line interface module."""
+"""Command-line interface module"""
 
 # Standard imports
 from os import path
@@ -8,22 +8,20 @@ import sys
 import argparse
 import logging
 
-# Import a package module.
-from scapex import mylib
+# Package module imports
+from scapex import APPLOGGER
 from scapex.config import InkscapeExporterConfig
-from scapex.log import ScapeXLogger, LOGGER
 
-# TODO: Should go into log.py?
-LOGGER = None
+# Module logger
+LOGGER = logging.getLogger(__name__)
 
 class ScapeXCLI:
     """Command-line interface for ScapeX."""
 
     def __init__(self):
         """Initialize command-line interface."""
-        global LOGGER
 
-        # Command-line interface ===============================================
+        # Setup command-line interface =========================================
 
         parser = argparse.ArgumentParser(
             prog='scapex',
@@ -45,16 +43,14 @@ class ScapeXCLI:
 
         self.args = parser.parse_args()
 
-        # Logging interface ====================================================
+        # Setup logging interface ==============================================
 
         if self.args.verbose:
             level = logging.DEBUG
         else:
             level = logging.INFO
-        # Create the logger
-        self.applogger = ScapeXLogger(level)
-        # Use a shortcut variable
-        LOGGER = self.applogger.logger
+        APPLOGGER.set_level(level)
+        LOGGER.debug("Debug mode enabled!")
 
     def run(self):
         """Execute the command-line."""

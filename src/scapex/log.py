@@ -9,9 +9,14 @@ Provides an application logger and a testing interface.
 import logging
 
 # Package imports
-# NOTE: Do not use `scapex.constants` to NOT run `__init__.py` when `__name__ == "__main__"`
-# Otherwise, when testing this module, two loggers are initialized
-from constants import PACKAGE_NAME
+
+try:
+    # If `__name__ == "__main__"`, this will load with success.
+    # We do not use `scapex.constants` to NOT run `__init__.py`,
+    # otherwise, when testing this module, two loggers will be initialized.
+    from constants import PACKAGE_NAME
+except ModuleNotFoundError:
+    from scapex.constants import PACKAGE_NAME
 
 class AppLogger():
     """Application logger

@@ -7,6 +7,9 @@ from os import path
 import sys
 import tomllib
 
+# Module logger
+LOGGER = logging.getLogger(__name__)
+
 class InkscapeExporterConfig():
     """Configuration for a `InkscapeExporter`.
 
