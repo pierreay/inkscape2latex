@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-"""Configuring module."""
+"""Inkscape exporter configuration module"""
 
 # Standard imports
 from os import path
@@ -12,48 +12,55 @@ import logging
 LOGGER = logging.getLogger(__name__)
 
 class ExporterConfig():
-    """Configuration for a `Exporter`.
+    """Configuration for an Exporter
 
-    This can be configured from command-line or a sidecar TOML file on-disk.
-
+    This class can be configured from command-line or a sidecar TOML file on-disk
+    The configuration is stored in single and common dictionary
     """
+
     # Constants ================================================================
 
-    # Export all the area defining the page.
+    # Export all the area defining the page
     INKSCAPE_OPT_AREA = "--export-area-page"
-    # Export in PDF rather than EPS.
+
+    # Export in PDF rather than EPS
     INKSCAPE_OPT_TYPE = "--export-type=pdf"
-    # Export with sidecar `pdf_tex` file such that LaTeX will render fonts during compilation.
+
+    # Export with sidecar `pdf_tex` file such that LaTeX will render fonts during compilation
     INKSCAPE_OPT_FONTS_LATEX = "--export-latex"
-    # Export in current working directroy by default.
+
+    # Export in current working directory by default
     OUTPUT_DIR_DEFAULT = "."
-    # Templates for output file based on exportation mode.
+
+    # Templates for output file based on exportation mode
     OUTPUT_FILE_FULL_TEMPLATE = "{}.pdf"
     OUTPUT_FILE_FRAGMENTS_TEMPLATE = "{}@{}.pdf"
-    # Let Inkscape render fonts by default.
+
+    # Default which fonts engine will do font rendering ["inkscape" | "latex"]
     FONTS_ENGINE_DEFAULT = "inkscape"
-    # By default, performs a full exportation instead of fragments
+
+    # Default exportation mode (False = Full, True = Fragments) [bool]
     FRAGMENTS_DEFAULT = False
 
     # Runtime variables ========================================================
 
     # Input SVG file to export [string]
     input_file = None
+  
     # Basename of input file (without leading directories and extension) [string]
     input_file_basename = None
+
     # Output directory for exportation [string]
     output_dir = OUTPUT_DIR_DEFAULT
 
-    # Common dictionary to command-line and TOML file.
+    # Common dictionary to command-line and TOML file
     config_dict = {
         "params": {
-            # Define which from Inkscape or LaTeX will render the fonts ["latex" | "inkscape"]
             "fonts_engine": FONTS_ENGINE_DEFAULT,
-            # Flag enabling fragments exportation instead of full exportation [bool]
             "fragments": FRAGMENTS_DEFAULT,
         },
-        # Defines series of fragments exportation
-        # [{"name": "NAME", "excluded_id": ["step1", "step3", "step3"]}]
+        # Series of fragments exportation. Scheme:
+        # [{"name": "NAME", "excluded_layers": ["step1", "step3", "step3"]}]
         "fragments": None,
     }
 
@@ -64,6 +71,8 @@ class ExporterConfig():
         """Generate a template TOML configuration file for a given input file"""
         # Define output file and template to write into
         output_file = input_file.replace(".svg", ".toml")
+
+        # Define template to write into output file
         template = '[params]\n' \
             + '# Set the font rendering engine [latex | inkscape]\n' \
             + 'fonts_engine = "inkscape"\n' \
@@ -77,6 +86,7 @@ class ExporterConfig():
             + '# Define the fragment exportation NAME2\n' \
             + '[fragments.NAME2]\n' \
             + 'excluded_layers = ["LAYER2", "LAYER3"]'
+
         # Perform the writing
         LOGGER.info("Generate template TOML configuration file: {}".format(output_file))
         with open(output_file, "w", encoding="utf-8") as f:
@@ -85,31 +95,30 @@ class ExporterConfig():
     # Methods ==================================================================
 
     def __init__(self, input_file):
-        """Initialize an exporter configuration with an input file and default values."""
+        """Initialize an exporter configuration with an input file and default values"""
         # Get an input file
         self.input_file = input_file
         # Derive basename
         self.input_file_basename = path.splitext(path.basename(self.input_file))[0]
 
     def load_toml(self):
-        """Load a configuration from a sidecar TOML file."""
-        # If found a corresponding TOML file, load it.
+        """Load configuration from a sidecar TOML file
+
+        If no TOML configuration is found, silently return.
+        """
         config_file_name = self.input_file.replace(".svg", ".toml")
+        # If found a corresponding TOML file...
         if path.exists(config_file_name):
             LOGGER.debug("Loading configuration from: {}".format(config_file_name))
             with open(config_file_name, "rb") as f:
-                config_file_content = tomllib.load(f)
-        # Otherwise, silently ignore.
-        else:
-            return
-        # Update object configuration from the TOML configuration
-        self.config_dict.update(config_file_content)
+                # Load it and update our object configuration dictionary
+                # from the TOML configuration
+                self.config_dict.update(tomllib.load(f))
 
     def load_args(self, output_dir=None, fonts_engine=None, fragments=None):
-        """Load configuration from arguments. 
+        """Load configuration from method arguments (typically, command-line arguments)
 
         Purpose is to configure manually for testing purpose or overriding after loading from a TOML file.
-
         """
         LOGGER.debug("Loading configuration from: {}".format(sys.argv))
         if output_dir is not None:
