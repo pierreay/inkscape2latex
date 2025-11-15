@@ -1,4 +1,5 @@
-# * Project configuration
+# Project configuration
+# ==============================================================================
 
 # Package name.
 PKG_NAME=scapex
@@ -13,7 +14,8 @@ PKG_DIR=src
 # Python interpreter.
 PYSHELL=python # [python | ipython]
 
-# * Running
+# Running
+# ==============================================================================
 
 # Run the package main function as a module and exit.
 run/once:
@@ -27,19 +29,22 @@ run/repl:
 run/script:
 	PYTHONPATH=$(PKG_DIR) $(PKG_DIR)/$(PKG_NAME)/$(MOD_NAME).py
 
-# * Testing
+# Testing
+# ==============================================================================
 
-# Run the library test as a script.
-test-lib:
-	PYTHONPATH=$(PKG_DIR) $(PKG_DIR)/$(PKG_NAME)/mylib.py
+# Run some modules as a script for testing purposes.
+test/log:
+	PYTHONPATH=$(PKG_DIR) $(PKG_DIR)/$(PKG_NAME)/log.py
 
-# * Building
+# Building
+# ==============================================================================
 
 # Build the Python distribution of our project.
 build:
 	python -m build
 
-# * Installing to root
+# Installing to root
+# ==============================================================================
 
 # Install the project system-wide using static installation method (copying files).
 install-root-dist:
@@ -53,7 +58,8 @@ install-root-dev:
 uninstall-root:
 	sudo pip uninstall --break-system-packages $(PKG_NAME)
 
-# * Installing to user
+# Installing to user
+# ==============================================================================
 
 # Install the project user-wide using static installation method (copying files).
 install-user-dist:
@@ -67,7 +73,8 @@ install-user-dev:
 uninstall-user:
 	pip uninstall --break-system-packages $(PKG_NAME)
 
-# * Cleaning
+# Cleaning
+# ==============================================================================
 
 clean:
 	sudo rm -rf build
