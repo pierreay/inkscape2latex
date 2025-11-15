@@ -1,7 +1,7 @@
 # * Project configuration
 
 # Package name.
-PKG_NAME=mypkg
+PKG_NAME=scapex
 
 # Main module name.
 MOD_NAME=mymod
