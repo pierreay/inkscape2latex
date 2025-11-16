@@ -25,16 +25,15 @@
 
 It is meant to export **high quality drawings**, graphics and diagrams, therefore the choice for the PDF format containing vector graphics.
 The design of the command-line interface makes it suitable to be used as a tool on the fly, or to be included inside a **Makefile**-based build system (*e.g.*, for **LaTeX**).
-In addition, this tool with its `fragments` export feature can be used to **create animated slides**, *e.g.*, using **Beamer**.
+In addition, this tool with its `fragments` export feature can be used to **create animated slides** (*e.g.*, using **Beamer**).
 
 # Features
 
-- Command-line interface with autocompletion
-- Each figure exportation can be configured by a sidecar TOML file
-- The `fragments` export mode will export the drawing into multiple PDFs based on predefined layers combinations
-- The fonts rendering can be done by Inkscape during the exportation, or by LaTeX during the compilation of a `.tex` file
-- System-wide or project-wide installation
-- Out-of-tree exportation
+- Command-line interface with **autocompletion**
+- Each **figure exportation** can be **configured by a sidecar TOML** file
+- The `fragments` export mode will **create multiple PDFs** based on **arbitrary layers combinations**
+- The **fonts rendering** can be done by **Inkscape** during the **exportation** or by **LaTeX** during the **compilation**
+- **Out-of-tree** exportation
 
 # Usage
 
