@@ -13,6 +13,5 @@ FN_NAME='main'
 # Get realpath of Python package
 src_path="$(realpath $(dirname ${0}))/../src"
 
-# Execute (and here is also an equivalent alternative)
-PYTHONPATH="${src_path}" "${src_path}/${PKG_NAME}/${MOD_NAME}.py" "${@}"
-# PYTHONPATH="${src_path}" python -c "from ${PKG_NAME} import ${MOD_NAME}; ${MOD_NAME}.${FN_NAME}();" "${@}"
+# Execute
+PYTHONPATH="${src_path}" python -c "from ${PKG_NAME} import ${MOD_NAME}; ${MOD_NAME}.${FN_NAME}();" "${@}"
