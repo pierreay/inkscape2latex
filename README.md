@@ -6,7 +6,7 @@
 
 # ScapeX — The command-line Inkscape eXporter, Makefile and LaTeX friendly
 
-<!-- TODO: When the screencast will be done... -->
+<!-- TODO: When the screencast is done... -->
 <!-- <p align="center"> -->
 <!--     <a href="https://github.com/pierreay/scapex/raw/master/doc/demo.gif"> -->
 <!--         <img src="https://github.com/pierreay/scapex/raw/master/doc/demo.gif"/> -->
@@ -21,32 +21,32 @@
     <a href="https://pypi.org/project/scapex/"><img src="https://badge.fury.io/py/scapex.svg"></a>
 </p>
 
-**ScapeX** is a **Python** utility that will invoke **Inkscape** to export an **SVG** drawing into a single or a set of **PDF** file(s).
+**ScapeX** is a **Python** utility that invokes **Inkscape** to export an **SVG** drawing into a single **PDF** file or a set of **PDFs**.
 
-It is meant to export **high quality drawings**, graphics and diagrams, therefore the choice for the PDF format containing vector graphics.
-The design of the command-line interface makes it suitable to be used as a tool on the fly, or to be included inside a **Makefile**-based build system (*e.g.*, for **LaTeX**).
-In addition, this tool with its `fragments` export feature can be used to **create animated slides** (*e.g.*, using **Beamer**).
+It is designed to export **high-quality drawings**, graphics, and diagrams, hence the choice of the PDF format for vector graphics.
+The design of the command-line interface makes it suitable for on-the-fly usage or integration in a **Makefile**-based build system (*e.g.*, for **LaTeX**).
+In addition, thanks to its `fragments` export feature, this tool can be used to **create animated slides** (*e.g.*, using **Beamer**).
 
 # Features
 
 - Command-line interface with **autocompletion**
-- Each **figure exportation** can be **configured by a sidecar TOML** file
-- The `fragments` export mode will **create multiple PDFs** based on **arbitrary layers combinations**
-- The **fonts rendering** can be done by **Inkscape** during the **exportation** or by **LaTeX** during the **compilation**
-- **Out-of-tree** exportation
+- Each **figure export** can be **configured via a sidecar TOML** file
+- The `fragments` export mode **creates multiple PDFs** based on **arbitrary layer combinations**
+- **Fonts rendering** can be performed either by **Inkscape** during *export* or by **LaTeX** during *compilation*
+- **Out-of-tree** export capability
 
 # Installation
 
-The easiest way of installing ScapeX is to use [PipX](https://pipx.pypa.io/stable/), a [Pip](https://pip.pypa.io/en/stable/) wrapper creating automatically a [virtual environment](https://docs.python.org/3/library/venv.html).
+The easiest way to install ScapeX is to use [PipX](https://pipx.pypa.io/stable/), a [Pip](https://pip.pypa.io/en/stable/) wrapper that automatically creates a [virtual environment](https://docs.python.org/3/library/venv.html).
 
 ```bash
 pipx install scapex
-```
+````
 
-In order to setup the Zsh autocompletion, add the following in your `~/.zshrc`:
+To enable Zsh autocompletion, add the following to your `~/.zshrc`:
 
 > [!WARNING]
-> This should be added before the very first call to `compinit` (which initialize the autocompletion system)
+> This must be added **before** the very first call to `compinit` (which initializes the autocompletion system).
 
 ```zshrc
 which scapex >/dev/null && fpath+=($(scapex --completions-zsh))
@@ -62,26 +62,26 @@ The simplest usage is to export a single PDF file, optionally into another build
 scapex -o BUILD_DIRECTORY INPUT.svg
 ```
 
-The fonts rendering can be let to be controlled by LaTeX using the `--fonts-engine=latex` option.
-This will create a `.pdf_tex` sidecar file to the `.pdf` file, containing the text that will be processed by LaTeX when including the exported PDF using the `\input{FILE.pdf_tex}` command:
+Fonts rendering can be delegated to LaTeX using the `--fonts-engine=latex` option.
+This will create a `.pdf_tex` sidecar file to the `.pdf`, containing the text that will be processed by LaTeX when including the exported PDF with `\input{FILE.pdf_tex}`:
 
 ```bash
 scapex --fonts-engine=latex INPUT.svg
 ```
 
-To create animated export, you can first generate a TOML configuration file for your diagram using:
+To create animated exports, first generate a TOML configuration file for your diagram:
 
 ```bash
 scapex --generate INPUT.svg
 ```
 
-Open the file and modify its configuration according to layer identifier defined in Inkscape:
+Open the file and adjust its configuration according to the layer identifiers defined in Inkscape:
 
 ```bash
 vim INPUT.toml
 ```
 
-Once done, you can perform the `fragments` exportation:
+Once ready, perform the `fragments` export:
 
 ```bash
 scapex --fragments INPUT.svg
@@ -116,5 +116,5 @@ options:
                         autocompletion script (instead of exporting)
 ```
 
-ScapeX can also be used inside a Makefile, allowing automatic exportation when a drawing is modified and dependency handling.
+ScapeX can also be used inside a Makefile, enabling automatic export when a drawing is modified and proper dependency handling.
 See the self-documented example under [examples/Makefile](./examples/Makefile).
