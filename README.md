@@ -14,8 +14,10 @@
 <!-- </p> -->
 
 <p align="center">
-    <a href="https://badge.fury.io/py/scapex"><img src="https://badge.fury.io/py/scapex.svg"></a>
-    <a href="https://badge.fury.io/py/scapex"><img src="https://static.pepy.tech/badge/scapex"></a>
+    <a href="https://pypi.org/project/scapex/"><img src="https://badge.fury.io/py/scapex.svg"></a>
+    <a href="https://inkscape.org/"><img src="https://img.shields.io/badge/Inkscape-e0e0e0?style=for-the-badge&logo=inkscape&logoColor=080A13"></a>
+    <a href="https://www.latex-project.org/"><img src="https://img.shields.io/badge/latex-%23008080.svg?style=for-the-badge&logo=latex&logoColor=white"></a>
+    <a href="https://www.python.org/"><img src="https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54"></a>
 </p>
 
 This is a Python utility that take an SVG draw to export it in PDF.
