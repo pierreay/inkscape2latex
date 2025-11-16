@@ -35,38 +35,9 @@ In addition, this tool with its `fragments` export feature can be used to **crea
 - The **fonts rendering** can be done by **Inkscape** during the **exportation** or by **LaTeX** during the **compilation**
 - **Out-of-tree** exportation
 
-# Usage
-
-## Command-line
-
-<!-- TODO: Dump of old Bash help. Write a step by step guide (with one summary screenshot ?) -->
-
-The source file (INFILE) should be an SVG.
-
-If --inkscape-fonts is not passed, the SVG which will be exported in two files:
-- An output file excluding text (OUTFILE).
-- An sidecar TeX file including text (OUTFILE_tex).
-The figure can be included into LaTex using the '\input{OUTFILE.pdf_tex}' command.
-
-If --inkscape-fonts is passed, the SVG which will be exported in one file:
-- An output file including text (OUTFILE).
-The figure can be included into LaTex using the '\includegraphics{OUTFILE.(pdf}' command.
-
-Optionnaly:
-- The script can export multiple layer combinations of the input.
-- The supported filetypes for the output is PDF.
-    pdf: Portable Document Format (PDF) 
-        Support transparancy and page area export.
-
-## Makefile
-
-ScapeX is also suitable to be used inside a Makefile.
-It allows automatic exportation and dependency handling, and to be included inside any LaTeX build system.
-See the self-documented example under [examples/Makefile](./examples/Makefile).
-
 # Installation
 
-## PipX
+The easiest way of installing ScapeX is to use [PipX](https://pipx.pypa.io/stable/), a [Pip](https://pip.pypa.io/en/stable/) wrapper creating automatically a [virtual environment](https://docs.python.org/3/library/venv.html).
 
 ```bash
 pipx install scapex
@@ -78,98 +49,72 @@ In order to setup the Zsh autocompletion, add the following in your `~/.zshrc`:
 > This should be added before the very first call to `compinit` (which initialize the autocompletion system)
 
 ```zshrc
-which scapex >/dev/null && fpath+=($(scapex --completions-zsh unexisting.svg))
+which scapex >/dev/null && fpath+=($(scapex --completions-zsh))
 ```
 
-## DEPRECATED
-
-> [!NOTE]
-> In the following code snippets, remplace the installation directory by the one of your choice.
-
-## Project-wide
-
-ScapeX can be installed as a `git` submodule for a self-contained project.
-Here is an example installing it into `TOPLEVEL_PROJECT/modules/scapex`:
-
-```bash
-cd TOPLEVEL_PROJECT && mkdir modules
-git submodule add https://github.com/pierreay/scapex modules/scapex
-``` 
-
-You have then to add `scapex/bin` into your `$PATH` using your preferred method.
-Here is an exemple:
-
-```bash
-cat << EOF > .env
-export PATH="${PATH}${PATH+:}$(realpath modules/scapex/bin)"
-EOF
-```
-
-The `.env` file should be sourced in the current shell, using a plugin (*e.g*, using [`dotenv`](https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/dotenv) or `direnv`) or either manually:
-
-```bash
-source .env
-```
-
-## System-wide
-
-ScapeX can be installed system-wide for a single user.
-Here is an example installing it into `~/.local/src/scapex`:
-
-```bash
-mkdir ~/.local/src && cd ~/.local/src
-git clone https://github.com/pierreay/scapex
-```
-
-You have then to add `scapex/bin` into your `$PATH` using your preferred method.
-Here is an exemple for Bash:
-
-```bash
-cat << EOF >> ~/.bashrc
-export PATH="${PATH}${PATH+:}${HOME}/.local/src/scapex/bin"
-EOF
-```
+You are ready to go!
 
 # Usage
 
-## Command-line interface
-
-ScapeX can be used as the following:
+The simplest usage is to export a single PDF file, optionally into another build directory:
 
 ```bash
-$ scapex --help
-Usage: scapex [-l LAYERFILE.json] [--inkscape-fonts] INFILE.svg OUTFILE.(pdf | eps)
-
-Export an Inkscape source file for LaTeX.
-
-The source file (INFILE) should be an SVG.
-
-If --inkscape-fonts is not passed, the SVG which will be exported in two files:
-- An output file excluding text (OUTFILE).
-- An sidecar TeX file including text (OUTFILE_tex).
-The figure can be included into LaTex using the '\input{OUTFILE.(pdf | eps)_tex}' command.
-
-If --inkscape-fonts is passed, the SVG which will be exported in one file:
-- An output file including text (OUTFILE).
-The figure can be included into LaTex using the '\includegraphics{OUTFILE.(pdf | eps)}' command.
-
-Optionnaly:
-- The script can export multiple layer combinations of the input.
-- The supported filetypes for the output are PDF and EPS.
-    eps: Encapsulated PostScript (EPS)
-        Do not support transparancy or page aera export.
-    pdf: Portable Document Format (PDF) 
-        Support transparancy and page aera export.
-
-Dependencies:
-- inkscape
-- jq
-- bc
-
-Options:
-    -l LAYERFILE:       Path to a JSON layer file.
-    --inkscape-fonts:   Font rendered by Inkscape intead of LaTeX.
-
-Examples:
-$ scapex -l utils/layers.json gfx/inkscape/drawing.svg build/gfx/inkscape/drawing.pdf
+scapex -o BUILD_DIRECTORY INPUT.svg
 ```
+
+The fonts rendering can be let to be controlled by LaTeX using the `--fonts-engine=latex` option.
+This will create a `.pdf_tex` sidecar file to the `.pdf` file, containing the text that will be processed by LaTeX when including the exported PDF using the `\input{FILE.pdf_tex}` command:
+
+```bash
+scapex --fonts-engine=latex INPUT.svg
+```
+
+To create animated export, you can first generate a TOML configuration file for your diagram using:
+
+```bash
+scapex --generate INPUT.svg
+```
+
+Open the file and modify its configuration according to layer identifier defined in Inkscape:
+
+```bash
+vim INPUT.toml
+```
+
+Once done, you can perform the `fragments` exportation:
+
+```bash
+scapex --fragments INPUT.svg
+```
+
+For additional usage, see:
+
+```bash
+usage: scapex [-h] [-v] [-o OUTPUT_DIR] [--generate]
+              [--fonts-engine {latex,inkscape}] [--fragments | --no-fragments]
+              [--completions-zsh]
+              [SVG_FILE]
+
+The command-line Inkscape eXporter, Makefile and LaTeX friendly
+
+positional arguments:
+  SVG_FILE              Inkscape drawing in SVG format to export
+
+options:
+  -h, --help            show this help message and exit
+  -v, --verbose         Increase verbosity if set
+  -o, --output-dir OUTPUT_DIR
+                        Set the output directory [default = .]
+  --generate            Generate a TOML template configuration file for input
+                        SVG file (instead of exporting)
+  --fonts-engine {latex,inkscape}
+                        Set the font rendering engine [default = inkscape]
+  --fragments, --no-fragments
+                        Enable (or disable) fragments exportation (instead of
+                        full exportation) [default = False]
+  --completions-zsh     Print the path of the directory containing the Zsh
+                        autocompletion script (instead of exporting)
+```
+
+ScapeX can also be used inside a Makefile, allowing automatic exportation when a drawing is modified and dependency handling.
+See the self-documented example under [examples/Makefile](./examples/Makefile).
