@@ -26,12 +26,12 @@ class CLI:
 
         parser = argparse.ArgumentParser(
             prog='scapex',
-            description='TODO'
+            description='The command-line Inkscape eXporter, Makefile and LaTeX friendly'
         )
 
         # NOTE: Synced with ZSH completion `_scapex`
 
-        parser.add_argument('SVG_FILE', help="Inkscape drawing in SVG format to export", type=str)
+        parser.add_argument('SVG_FILE', help="Inkscape drawing in SVG format to export", type=str, nargs='?')
 
         parser.add_argument('-v', '--verbose', default=False, action="store_true",
                             help="Increase verbosity if set")
@@ -81,6 +81,9 @@ class CLI:
         # ----------------------------------------------------------------------
 
         # Check user-input consistency
+        if self.args.SVG_FILE is None:
+            LOGGER.critical("Missing positional argument SVG_FILE!")
+            sys.exit(1)
         if not path.exists(self.args.SVG_FILE):
             LOGGER.critical("{} not found!".format(self.args.SVG_FILE))
             sys.exit(1)
