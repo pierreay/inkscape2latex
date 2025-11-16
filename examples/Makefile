@@ -1,11 +1,14 @@
 # Variables
 # ==============================================================================
 
+# Source files directory (current directory = .)
+SRC_DIR := ../doc
+
 # Source files (SVGs)
-SRC_FILES := $(shell find . -type f -name '*.svg')
+SRC_FILES := $(shell find $(SRC_DIR) -type f -name '*.svg')
 
 # Configuration files (TOMLs)
-CONFIG_FILES := $(patsubst ./%.svg,./%.toml,$(SRC_FILES))
+CONFIG_FILES := $(patsubst $(SRC_DIR)/%.svg,$(SRC_DIR)/%.toml,$(SRC_FILES))
 
 # Output directory
 BUILD_DIR := build
@@ -14,7 +17,7 @@ BUILD_DIR := build
 BUILD_FT := pdf
 
 # Output files (do not contains fragments) (PDFs)
-BUILD_FILES := $(patsubst ./%.svg,$(BUILD_DIR)/%.$(BUILD_FT),$(SRC_FILES))
+BUILD_FILES := $(patsubst $(SRC_DIR)/%.svg,$(BUILD_DIR)/%.$(BUILD_FT),$(SRC_FILES))
 
 # Goals
 # ==============================================================================
@@ -43,7 +46,7 @@ $(BUILD_DIR):
 	mkdir -p $(BUILD_DIR)
 
 # Convert a SVG into a PDF or a set of PDFs (potentially with `.pdf_tex` sidecars)
-$(BUILD_DIR)/%.$(BUILD_FT): %.svg %.toml | $(BUILD_DIR)
+$(BUILD_DIR)/%.$(BUILD_FT): $(SRC_DIR)/%.svg $(SRC_DIR)/%.toml | $(BUILD_DIR)
 	scapex -o $(BUILD_DIR) $<
 	touch $@
 
