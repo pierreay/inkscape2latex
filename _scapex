@@ -1,0 +1,41 @@
+#compdef scapex
+
+# UUID: cc3ed312-65a4-41d6-be85-2ab57ee7c7a8
+
+help_str="Show help"
+verbose_str="Increase verbosity if set"
+output_dir_str="Set the output directory"
+# TODO: Add defaults from Python
+generate_str="Generate a TOML template configuration file for input SVG file (instead of exporting)"
+fonts_engine_str="Set the font rendering engine"
+fragments_str="Enable fragments exportation (instead of full exportation)"
+no_fragments_str="Disable fragments exportation (set full exportation)"
+
+__find_svg() {
+  local myargs=($(find . -name "*.svg"))
+  compadd "${myargs[@]}"
+}
+
+__find_dir() {
+  local myargs=($(find . -type d))
+  compadd "${myargs[@]}"
+}
+
+_scapex() {
+  local line
+
+  _arguments -C \
+    "-h[$help_str]" \
+    "--help[$help_str]" \
+    "-v[$verbose_str]" \
+    "--verbose[$verbose_str]" \
+    "-o[$output_dir_str]:output_dir:__find_dir" \
+    "--output-dir[$output_dir_str]:output_dir:__find_dir" \
+    "--generate[$generate_str]" \
+    "--fonts-engine[$fonts_engine_str]:fonts_engine:(latex inkscape)" \
+    "--fragments[$fragments_str]" \
+    "--no-fragments[$no_fragments_str]" \
+    '1:svg_file:__find_svg'
+}
+
+_scapex "$@"

@@ -29,7 +29,9 @@ class CLI:
             description='TODO'
         )
 
-        parser.add_argument('FILE', help="Inkscape drawing in SVG format to export", type=str)
+        # NOTE: Synced with ZSH completion `_scapex`
+
+        parser.add_argument('SVG_FILE', help="Inkscape drawing in SVG format to export", type=str)
 
         parser.add_argument('-v', '--verbose', default=False, action="store_true",
                             help="Increase verbosity if set")
