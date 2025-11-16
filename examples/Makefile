@@ -1,39 +1,55 @@
-# Program: inkscape2latex-ng
-# Author: Pierre Ayoub
-# Date: 2025-09-19
+# Variables
+# ==============================================================================
 
-# Source files
-INKSCAPE_SRC_FILES := $(shell find . -type f -name '*.svg')
+# Source files directory (current directory = .)
+SRC_DIR := ../doc
 
-# Output filetype
-INKSCAPE_BUILD_FT := pdf
+# Source files (SVGs)
+SRC_FILES := $(shell find $(SRC_DIR) -type f -name '*.svg')
+
+# Configuration files (TOMLs)
+CONFIG_FILES := $(patsubst $(SRC_DIR)/%.svg,$(SRC_DIR)/%.toml,$(SRC_FILES))
 
 # Output directory
-INKSCAPE_BUILD_DIR := build
+BUILD_DIR := build
 
-# Exported files (do not contains fragments)
-INKSCAPE_BUILD_FILES := $(patsubst ./%.svg,$(INKSCAPE_BUILD_DIR)/%.$(INKSCAPE_BUILD_FT),$(INKSCAPE_SRC_FILES))
+# Output filetype (PDF)
+BUILD_FT := pdf
 
-all: $(INKSCAPE_BUILD_FILES)
+# Output files (do not contains fragments) (PDFs)
+BUILD_FILES := $(patsubst $(SRC_DIR)/%.svg,$(BUILD_DIR)/%.$(BUILD_FT),$(SRC_FILES))
 
-# .svg -> {.pdf, .pdf_tex}
-$(INKSCAPE_BUILD_DIR)/%.$(INKSCAPE_BUILD_FT): %.svg
-	inkscape2latex-ng -o $(INKSCAPE_BUILD_DIR) $<
-	touch $@
+# Goals
+# ==============================================================================
 
-# Create the build directory
-$(INKSCAPE_BUILD_DIR):
-	mkdir -p $(INKSCAPE_BUILD_DIR)
+all: $(BUILD_FILES)
 
 clean:
-	rm -f $(INKSCAPE_BUILD_FILES) \
-		$(patsubst %.pdf,%@*.pdf,$(INKSCAPE_BUILD_FILES)) \
-		$(patsubst %.pdf,%.pdf_tex,$(INKSCAPE_BUILD_FILES)) \
-		$(patsubst %.pdf,%@.pdf_tex,$(INKSCAPE_BUILD_FILES))
-	test $(INKSCAPE_BUILD_DIR) != "." -a -d $(INKSCAPE_BUILD_DIR) && rmdir $(INKSCAPE_BUILD_DIR) || true
+	rm -f $(BUILD_FILES) \
+		$(patsubst %.pdf,%@*.pdf,$(BUILD_FILES)) \
+		$(patsubst %.pdf,%.pdf_tex,$(BUILD_FILES)) \
+		$(patsubst %.pdf,%@.pdf_tex,$(BUILD_FILES))
+	test $(BUILD_DIR) != "." -a -d $(BUILD_DIR) && rmdir $(BUILD_DIR) || true
 
 printenv:
-	@echo INKSCAPE_SRC_FILES=$(INKSCAPE_SRC_FILES)
-	@echo INKSCAPE_BUILD_FT=$(INKSCAPE_BUILD_FT)
-	@echo INKSCAPE_BUILD_DIR=$(INKSCAPE_BUILD_DIR)
-	@echo INKSCAPE_BUILD_FILES=$(INKSCAPE_BUILD_FILES)
+	@echo SRC_FILES=$(SRC_FILES)
+	@echo CONFIG_FILES=$(CONFIG_FILES)
+	@echo BUILD_FT=$(BUILD_FT)
+	@echo BUILD_DIR=$(BUILD_DIR)
+	@echo BUILD_FILES=$(BUILD_FILES)
+
+# Targets
+# ==============================================================================
+
+# Create the build directory
+$(BUILD_DIR):
+	mkdir -p $(BUILD_DIR)
+
+# Convert a SVG into a PDF or a set of PDFs (potentially with `.pdf_tex` sidecars)
+$(BUILD_DIR)/%.$(BUILD_FT): $(SRC_DIR)/%.svg $(SRC_DIR)/%.toml | $(BUILD_DIR)
+	scapex -o $(BUILD_DIR) $<
+	touch $@
+
+# Generate a default configuration file
+%.toml:
+	scapex --generate $(patsubst %.toml,%.svg,$@)

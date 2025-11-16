@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+# Allows to quickly test the Python package without installing anything using
+# venv, Pip or Pipx.
+
+# Main Python package name
+PKG_NAME='scapex'
+# Main Python module name
+MOD_NAME='cli'
+# Main Python function name
+FN_NAME='main'
+
+# Get realpath of Python package
+src_path="$(realpath $(dirname ${0}))/../src"
+
+# Execute
+PYTHONPATH="${src_path}" python -c "from ${PKG_NAME} import ${MOD_NAME}; ${MOD_NAME}.${FN_NAME}();" "${@}"

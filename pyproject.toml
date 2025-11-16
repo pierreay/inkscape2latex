@@ -1,0 +1,47 @@
+# This project use the `src` layout
+# See: https://setuptools.pypa.io/en/latest/userguide/package_discovery.html
+
+# Build system configuration
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+# Project metadata configuration
+[project]
+name = "scapex"
+version = "0.2.0"
+authors = [
+    { name="Pierre Ayoub", email="pierreay@proton.me" },
+]
+description = "The command-line Inkscape eXporter, Makefile and LaTeX friendly"
+readme = "README.md"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: POSIX :: Linux",
+    "Development Status :: 5 - Production/Stable",
+    "Topic :: Utilities"
+]
+license = "GPL-3.0-only"
+license-files = ["LICEN[CS]E*"]
+# If any dependencies are added in the future, put them here
+# dependencies = [
+#     "click",
+#     "colorlog"
+# ]
+
+[project.urls]
+Homepage = "https://github.com/pierreay/scapex"
+Issues = "https://github.com/pierreay/scapex/issues"
+
+# Scripts configuration
+[project.scripts]
+# Will create a `scapex` Bash script, targeting
+# -> The `scapex` package
+# -> The `cli` module
+# -> The `main()` function
+scapex = "scapex.cli:main"
+
+# Additional data
+# https://setuptools.pypa.io/en/stable/userguide/datafiles.html
+[tool.setuptools.package-data]
+"scapex.zsh" = ["_scapex"]
