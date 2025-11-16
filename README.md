@@ -52,7 +52,7 @@ To enable Zsh autocompletion, add the following to your `~/.zshrc`:
 which scapex >/dev/null && fpath+=($(scapex --completions-zsh))
 ```
 
-You are ready to go!
+Restart your shell and you are ready to go!
 
 # Usage
 

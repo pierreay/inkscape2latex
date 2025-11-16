@@ -2,14 +2,14 @@
 
 # UUID: cc3ed312-65a4-41d6-be85-2ab57ee7c7a8
 
-help_str="Show help"
-verbose_str="Increase verbosity if set"
-output_dir_str="Set the output directory [default = .]"
-generate_str="Generate a TOML template configuration file for input SVG file (instead of exporting)"
-fonts_engine_str="Set the font rendering engine [default = inkscape]"
-fragments_str="Enable fragments exportation (instead of full exportation) [default = False]"
-no_fragments_str="Disable fragments exportation (set full exportation) [default = True]"
-completions_zsh_str="Print the path of the directory containing the Zsh autocompletion script (instead of exporting)"
+help_str='Show help'
+verbose_str='Increase verbosity if set'
+output_dir_str='Set the output directory \[default = .\]'
+generate_str='Generate a TOML template configuration file for input SVG file (instead of exporting)'
+fonts_engine_str='Set the font rendering engine \[default = inkscape\]'
+fragments_str='Enable fragments exportation (instead of full exportation) \[default = False\]'
+no_fragments_str='Disable fragments exportation (set full exportation) \[default = True\]'
+completions_zsh_str='Print the path of the directory containing the Zsh autocompletion script (instead of exporting)'
 
 __find_svg() {
   local myargs=($(find . -name "*.svg"))
