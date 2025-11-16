@@ -1,6 +1,12 @@
+# Documentation
+
+- Write `INSTALL.md`
+- Write `CONTRIBUTING.md`
+- Write a user manual in Markdown or reStructuredText (see `doc/user-manual.md`)
+
 # Reliability
 
-- If Inkscape crash (*e.g.*, when exportation occurs in parallel)
+- If Inkscape crash (*e.g.*, when exportation occurs massively parallel)
     - Implement an "execute and retry" mechanism
         - Random sleep between retries
         - Stop retrying after defined number of fails
