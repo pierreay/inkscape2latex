@@ -1,6 +1,6 @@
 <p align="center">
     <a href="https://github.com/pierreay/scapex">
-        <img align="center" src="https://github.com/pierreay/scapex/raw/main/doc/logo.svg" width="200"/>
+        <img align="center" src="https://github.com/pierreay/scapex/raw/master/doc/logo.svg" width="200"/>
     </a>
 </p>
 
@@ -8,8 +8,8 @@
 
 <!-- TODO: -->
 <!-- <p align="center"> -->
-<!--     <a href="https://github.com/pierreay/scapex/raw/main/doc/demo.gif"> -->
-<!--         <img src="https://github.com/pierreay/scapex/raw/main/doc/demo.gif"/> -->
+<!--     <a href="https://github.com/pierreay/scapex/raw/master/doc/demo.gif"> -->
+<!--         <img src="https://github.com/pierreay/scapex/raw/master/doc/demo.gif"/> -->
 <!--     </a> -->
 <!-- </p> -->
 
