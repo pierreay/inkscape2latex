@@ -1,7 +1,18 @@
 #!/usr/bin/env bash
 
-src_path="$(realpath $(dirname ${0}))/../src"
-PYTHONPATH="${src_path}" "${src_path}/scapex/cli.py" "${@}"
+# Allows to quickly test the Python package without installing anything using
+# venv, Pip or Pipx.
 
-# Equivalent alternative:
-# PYTHONPATH="${src_path}" python -c "from scapex import cli; cli.main();" "${*}"
+# Main Python package name
+PKG_NAME='scapex'
+# Main Python module name
+MOD_NAME='cli'
+# Main Python function name
+FN_NAME='main'
+
+# Get realpath of Python package
+src_path="$(realpath $(dirname ${0}))/../src"
+
+# Execute (and here is also an equivalent alternative)
+PYTHONPATH="${src_path}" "${src_path}/${PKG_NAME}/${MOD_NAME}.py" "${@}"
+# PYTHONPATH="${src_path}" python -c "from ${PKG_NAME} import ${MOD_NAME}; ${MOD_NAME}.${FN_NAME}();" "${@}"
