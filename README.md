@@ -1,6 +1,6 @@
 <p align="center">
     <a href="https://github.com/pierreay/scapex">
-        <img align="center" src="https://github.com/pierreay/scapex/raw/master/doc/logo.svg" width="200"/>
+        <img align="center" src="https://github.com/pierreay/scapex/raw/master/doc/logo.svg" width="300"/>
     </a>
 </p>
 
