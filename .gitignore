@@ -1,2 +1,7 @@
+# NOTE: Synced with `Makefile:clean`
+build
+dist
 __pycache__
 *.egg-info
+.venv-*
+examples/build

@@ -30,9 +30,11 @@ build:
 	python -m build
 
 # Clean all generated files during building and installing
+# NOTE: Sync with `.gitignore`
 clean:
 	rm -rf build
 	rm -rf dist
 	rm -rf src/$(PKG_NAME).egg-info
 	rm -rf src/$(PKG_NAME)/__pycache__
 	rm -rf .venv-scapex
+	cd examples && make clean
