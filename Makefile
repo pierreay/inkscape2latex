@@ -1,83 +1,38 @@
-# Project configuration
+# Variables
 # ==============================================================================
 
-# Package name.
+# Main package name (also used as command-line script name in `pyproject.toml`)
 PKG_NAME=scapex
 
-# Main module name.
-MOD_NAME=cli
-
-# Package directory.
-# NOTE: This corresponds to the so-called "src" layout of Python documentation.
-PKG_DIR=src
-
-# Python interpreter.
-PYSHELL=python # [python | ipython]
-
-# Running
+# Targets
 # ==============================================================================
 
-# Run the package main function as a module and exit.
-run/once:
-	PYTHONPATH=$(PKG_DIR) $(PYSHELL) -c "from $(PKG_NAME) import $(MOD_NAME); $(MOD_NAME).main();"
+# Create the virtual environnement
+.venv-$(PKG_NAME):
+	python -m venv $@
 
-# Import the package main module and gives an interactive REPL.
-run/repl:
-	PYTHONPATH=$(PKG_DIR) $(PYSHELL) -i -c "from $(PKG_NAME) import $(MOD_NAME);"
+# Install the Python package inside the virtual environnement
+.venv-$(PKG_NAME)/bin/$(PKG_NAME): .venv-$(PKG_NAME)
+	sh -c "source .venv-$(PKG_NAME)/bin/activate && pip install --editable ."
 
-# Run the package main module as a script.
-run/script:
-	PYTHONPATH=$(PKG_DIR) $(PKG_DIR)/$(PKG_NAME)/$(MOD_NAME).py
-
-# Testing
+# Goals
 # ==============================================================================
 
-# Run some modules as a script for testing purposes.
+# Test logging module
 test/log:
-	PYTHONPATH=$(PKG_DIR) $(PKG_DIR)/$(PKG_NAME)/log.py
+	PYTHONPATH=src src/$(PKG_NAME)/log.py
 
-# Building
-# ==============================================================================
+# Install the Python package inside a local virtual environnement in editable mode
+install: .venv-$(PKG_NAME)/bin/$(PKG_NAME)
 
-# Build the Python distribution of our project.
+# TODO: Build the Python distribution of our project.
 build:
 	python -m build
 
-# Installing to root
-# ==============================================================================
-
-# Install the project system-wide using static installation method (copying files).
-install-root-dist:
-	sudo pip install --break-system-packages .
-
-# Install the project system-wide using dynamic installation method (symlinking files).
-install-root-dev:
-	sudo pip install --break-system-packages --editable .
-
-# Uninstall the project system-wide.
-uninstall-root:
-	sudo pip uninstall --break-system-packages $(PKG_NAME)
-
-# Installing to user
-# ==============================================================================
-
-# Install the project user-wide using static installation method (copying files).
-install-user-dist:
-	pip install --break-system-packages --user .
-
-# Install the project user-wide using dynamic installation method (symlinking files).
-install-user-dev:
-	pip install --break-system-packages --user --editable .
-
-# Uninstall the project user-wide.
-uninstall-user:
-	pip uninstall --break-system-packages $(PKG_NAME)
-
-# Cleaning
-# ==============================================================================
-
+# Clean all generated files during building and installing
 clean:
-	sudo rm -rf build
-	sudo rm -rf dist
-	sudo rm -rf $(PKG_DIR)/$(PKG_NAME).egg-info
-	sudo rm -rf $(PKG_DIR)/$(PKG_NAME)/__pycache__
+	rm -rf build
+	rm -rf dist
+	rm -rf src/$(PKG_NAME).egg-info
+	rm -rf src/$(PKG_NAME)/__pycache__
+	rm -rf .venv-scapex
