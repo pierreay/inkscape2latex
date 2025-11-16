@@ -21,19 +21,18 @@
     <a href="https://pypi.org/project/scapex/"><img src="https://badge.fury.io/py/scapex.svg"></a>
 </p>
 
-This is a Python utility that take an SVG draw to export it in PDF.
-The export can be configured such as:
-- The fonts can be rendered by Inkscape during the export of by LaTeX during the compilation of the document,
-- The figure can be exported entirely (full mode) or in multiple fragments depending on layers identifiers.
-
-The fragment export feature allows to create animated slides, *e.g.*, using Beamer.
+ScapeX is a Python utility that will invoke Inkscape to export an SVG drawing into a single or a set of PDF file(s).
+It is meant to export high quality drawings, graphics and diagrams, therefore the choice for the PDF format containing vector graphics.
+The design of the command-line interface makes it suitable to be used as a tool on the fly, or to be included inside a Makefile-based build system (*e.g.*, for LaTeX).
+In addition, this tool with its `fragments` export feature can be used to create animated slides, *e.g.*, using Beamer.
 
 # Features
 
-- Command-line interface
-- Optional per-figure TOML configuration file
-- Two different exportation mode, full or fragments
-- Project-wide or system-wide installation
+- Command-line interface with autocompletion
+- Each figure exportation can be configured by a sidecar TOML file
+- The `fragments` export mode will export the drawing into multiple PDFs based on predefined layers combinations
+- The fonts rendering can be done by Inkscape during the exportation, or by LaTeX during the compilation of a `.tex` file
+- System-wide or project-wide installation
 - Out-of-tree exportation
 
 # Usage
