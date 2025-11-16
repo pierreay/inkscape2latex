@@ -22,4 +22,4 @@ version = "0.1.0"
 # -> The `scapex` package
 # -> The `cli` module
 # -> The `main()` function
-scapex-cli = "scapex.cli:main"
+scapex = "scapex.cli:main"
