@@ -4,6 +4,9 @@
 # Main package name (also used as command-line script name in `pyproject.toml`)
 PKG_NAME=scapex
 
+# Whether to download/upload from/on official or testing PyPi [testpypi | pypi]
+UPLOAD_REPO=testpypi
+
 # Targets
 # ==============================================================================
 
@@ -23,7 +26,7 @@ test/log:
 	PYTHONPATH=src src/$(PKG_NAME)/log.py
 
 # Install the Python package inside a local virtual environnement in editable mode
-install: .venv-$(PKG_NAME)/bin/$(PKG_NAME)
+venv: .venv-$(PKG_NAME)/bin/$(PKG_NAME)
 
 # Build the Python distribution for uploading
 build: clean
@@ -31,12 +34,22 @@ build: clean
 
 # Upload the Python distribution on PyPi
 upload: build
+ifeq ($(UPLOAD_REPO),testpypi)
 	twine upload --verbose --repository testpypi dist/*
+else
+	twine upload --verbose dist/*
+endif
 
-# Test installation and uninstallation using PipX
-pipx/install:
+# Install using PipX
+install:
+ifeq ($(UPLOAD_REPO),testpypi)
 	pipx install --index-url https://test.pypi.org/simple/ $(PKG_NAME)
-pipx/uninstall:
+else
+	pipx install $(PKG_NAME)
+endif
+
+# Uninstall using PipX
+uninstall:
 	pipx uninstall $(PKG_NAME)
 
 # Clean all generated files during building and installing
