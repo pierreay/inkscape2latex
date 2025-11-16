@@ -43,6 +43,8 @@ class CLI:
                             help="Set the font rendering engine [default = {}]".format(ExporterConfig.FONTS_ENGINE_DEFAULT))
         parser.add_argument("--fragments", action=argparse.BooleanOptionalAction, default=None,
                             help="Enable (or disable) fragments exportation (instead of full exportation) [default = {}]".format(ExporterConfig.FRAGMENTS_DEFAULT))
+        parser.add_argument("--completions-zsh", action="store_true",
+                            help="Print the path of the directory containing the Zsh autocompletion script (instead of exporting)")
 
         self.args = parser.parse_args()
 
@@ -55,8 +57,29 @@ class CLI:
         APPLOGGER.set_level(level)
         LOGGER.debug("Debug mode enabled!") # Will be printed only if DEBUG level is set
 
+    @staticmethod
+    def show_completions_zsh():
+        """Print the path of the directory containing the Zsh autocompletion script dynamically"""
+        print("{}/{}".format(
+            path.dirname(__file__), "zsh"
+        ))
+
     def run(self):
         """Execute the command-line"""
+        # Process special options acting as subcommands
+        # that differs from main command (exportation)
+        # but that DO NOT rely on the SVG file
+        # ----------------------------------------------------------------------
+
+        if self.args.completions_zsh:
+            CLI.show_completions_zsh()
+            exit(0)
+
+        # Process special options acting as subcommands
+        # that differs from main command (exportation)
+        # but that rely on the SVG file
+        # ----------------------------------------------------------------------
+
         # Check user-input consistency
         if not path.exists(self.args.SVG_FILE):
             LOGGER.critical("{} not found!".format(self.args.SVG_FILE))
@@ -64,10 +87,6 @@ class CLI:
         if not path.splitext(self.args.SVG_FILE)[1] == ".svg":
             LOGGER.critical("{} not an SVG!".format(self.args.SVG_FILE))
             sys.exit(1)
-
-        # Process special options acting as subcommands
-        # that differs from main command (exportation)
-        # ----------------------------------------------------------------------
 
         if self.args.generate:
             ExporterConfig.generate_toml_template(self.args.SVG_FILE)

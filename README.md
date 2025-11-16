@@ -65,6 +65,23 @@ See the self-documented example under [examples/Makefile](./examples/Makefile).
 
 # Installation
 
+## PipX
+
+```bash
+pipx install scapex
+```
+
+In order to setup the Zsh autocompletion, add the following in your `~/.zshrc`:
+
+> [!WARNING]
+> This should be added before the very first call to `compinit` (which initialize the autocompletion system)
+
+```zshrc
+which scapex >/dev/null && fpath+=($(scapex --completions-zsh unexisting.svg))
+```
+
+## DEPRECATED
+
 > [!NOTE]
 > In the following code snippets, remplace the installation directory by the one of your choice.
 

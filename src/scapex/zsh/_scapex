@@ -4,12 +4,12 @@
 
 help_str="Show help"
 verbose_str="Increase verbosity if set"
-output_dir_str="Set the output directory"
-# TODO: Add defaults from Python
+output_dir_str="Set the output directory [default = .]"
 generate_str="Generate a TOML template configuration file for input SVG file (instead of exporting)"
-fonts_engine_str="Set the font rendering engine"
-fragments_str="Enable fragments exportation (instead of full exportation)"
-no_fragments_str="Disable fragments exportation (set full exportation)"
+fonts_engine_str="Set the font rendering engine [default = inkscape]"
+fragments_str="Enable fragments exportation (instead of full exportation) [default = False]"
+no_fragments_str="Disable fragments exportation (set full exportation) [default = True]"
+completions_zsh_str="Print the path of the directory containing the Zsh autocompletion script (instead of exporting)"
 
 __find_svg() {
   local myargs=($(find . -name "*.svg"))
@@ -35,6 +35,7 @@ _scapex() {
     "--fonts-engine[$fonts_engine_str]:fonts_engine:(latex inkscape)" \
     "--fragments[$fragments_str]" \
     "--no-fragments[$no_fragments_str]" \
+    "--completions-zsh[$completions_zsh_str]" \
     '1:svg_file:__find_svg'
 }
 
