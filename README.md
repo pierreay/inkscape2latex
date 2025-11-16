@@ -62,12 +62,7 @@ The simplest usage is to export a single PDF file, optionally into another build
 scapex -o BUILD_DIRECTORY INPUT.svg
 ```
 
-Fonts rendering can be delegated to LaTeX using the `--fonts-engine=latex` option.
-This will create a `.pdf_tex` sidecar file to the `.pdf`, containing the text that will be processed by LaTeX when including the exported PDF with `\input{FILE.pdf_tex}`:
-
-```bash
-scapex --fonts-engine=latex INPUT.svg
-```
+## Fragments (animations)
 
 To create animated exports, first generate a TOML configuration file for your diagram:
 
@@ -87,7 +82,23 @@ Once ready, perform the `fragments` export:
 scapex --fragments INPUT.svg
 ```
 
-For additional usage, see:
+## Interfacing with LaTeX (fonts rendering)
+
+Fonts rendering can be delegated to LaTeX using the `--fonts-engine=latex` option.
+This will create a `.pdf_tex` sidecar file to the `.pdf`, containing the text that will be processed by LaTeX when including the exported PDF with `\input{FILE.pdf_tex}`:
+
+```bash
+scapex --fonts-engine=latex INPUT.svg
+```
+
+## Interfacing with Makefile
+
+ScapeX can also be used inside a Makefile, enabling automatic export when a drawing is modified and proper dependency handling.
+See the self-documented example under [examples/Makefile](./examples/Makefile).
+
+## Getting help
+
+For additional usage, see `scapex -h`:
 
 ```bash
 usage: scapex [-h] [-v] [-o OUTPUT_DIR] [--generate]
@@ -115,6 +126,3 @@ options:
   --completions-zsh     Print the path of the directory containing the Zsh
                         autocompletion script (instead of exporting)
 ```
-
-ScapeX can also be used inside a Makefile, enabling automatic export when a drawing is modified and proper dependency handling.
-See the self-documented example under [examples/Makefile](./examples/Makefile).
