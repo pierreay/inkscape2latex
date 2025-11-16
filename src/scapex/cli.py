@@ -58,11 +58,11 @@ class CLI:
     def run(self):
         """Execute the command-line"""
         # Check user-input consistency
-        if not path.exists(self.args.FILE):
-            LOGGER.critical("{} not found!".format(self.args.FILE))
+        if not path.exists(self.args.SVG_FILE):
+            LOGGER.critical("{} not found!".format(self.args.SVG_FILE))
             sys.exit(1)
-        if not path.splitext(self.args.FILE)[1] == ".svg":
-            LOGGER.critical("{} not an SVG!".format(self.args.FILE))
+        if not path.splitext(self.args.SVG_FILE)[1] == ".svg":
+            LOGGER.critical("{} not an SVG!".format(self.args.SVG_FILE))
             sys.exit(1)
 
         # Process special options acting as subcommands
@@ -70,14 +70,14 @@ class CLI:
         # ----------------------------------------------------------------------
 
         if self.args.generate:
-            ExporterConfig.generate_toml_template(self.args.FILE)
+            ExporterConfig.generate_toml_template(self.args.SVG_FILE)
             exit(0)
 
         # From here, we are going to perform an exportation
         # ----------------------------------------------------------------------
 
         # Create the configuration for the input file
-        config = ExporterConfig(input_file=self.args.FILE)
+        config = ExporterConfig(input_file=self.args.SVG_FILE)
 
         # By default, load from TOML if detected
         config.load_toml()
