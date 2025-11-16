@@ -26,7 +26,7 @@ test/log:
 install: .venv-$(PKG_NAME)/bin/$(PKG_NAME)
 
 # Build the Python distribution for uploading
-build:
+build: clean
 	python -m build
 
 # Upload the Python distribution on PyPi
@@ -37,7 +37,7 @@ upload: build
 pipx/install:
 	pipx install --index-url https://test.pypi.org/simple/ $(PKG_NAME)
 pipx/uninstall:
-	pipx remove $(PKG_NAME)
+	pipx uninstall $(PKG_NAME)
 
 # Clean all generated files during building and installing
 # NOTE: Sync with `.gitignore`
