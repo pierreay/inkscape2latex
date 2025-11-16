@@ -1,6 +1,23 @@
-# ScapeX
+<p align="center">
+    <a href="https://github.com/pierreay/scapex">
+        <img align="center" src="https://github.com/pierreay/scapex/raw/main/doc/logo.svg" width="200"/>
+    </a>
+</p>
 
-The command-line Inkscape exporter, Makefile and LaTeX friendly.
+# ScapeX — The command-line Inkscape exporter, Makefile and LaTeX friendly
+
+<!-- TODO: -->
+<!-- <p align="center"> -->
+<!--     <a href="https://github.com/pierreay/scapex/raw/main/doc/demo.gif"> -->
+<!--         <img src="https://github.com/pierreay/scapex/raw/main/doc/demo.gif"/> -->
+<!--     </a> -->
+<!-- </p> -->
+
+<!-- TODO: -->
+<!-- <p align="center"> -->
+<!--     <a href="https://badge.fury.io/py/scapex"><img src="https://badge.fury.io/py/scapex.svg"></a> -->
+<!--     <a href="https://badge.fury.io/py/scapex"><img src="https://static.pepy.tech/badge/scapex"></a> -->
+<!-- </p> -->
 
 This is a Python utility that take an SVG draw to export it in PDF.
 The export can be configured such as:
