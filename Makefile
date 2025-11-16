@@ -25,9 +25,19 @@ test/log:
 # Install the Python package inside a local virtual environnement in editable mode
 install: .venv-$(PKG_NAME)/bin/$(PKG_NAME)
 
-# TODO: Build the Python distribution of our project.
+# Build the Python distribution for uploading
 build:
 	python -m build
+
+# Upload the Python distribution on PyPi
+upload: build
+	twine upload --verbose --repository testpypi dist/*
+
+# Test installation and uninstallation using PipX
+pipx/install:
+	pipx install --index-url https://test.pypi.org/simple/ $(PKG_NAME)
+pipx/uninstall:
+	pipx remove $(PKG_NAME)
 
 # Clean all generated files during building and installing
 # NOTE: Sync with `.gitignore`

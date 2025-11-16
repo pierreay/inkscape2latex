@@ -1,6 +1,6 @@
 # ScapeX
 
-A command-line Inkscape exporter which is Makefile and LaTeX friendly.
+The command-line Inkscape exporter, Makefile and LaTeX friendly.
 
 This is a Python utility that take an SVG draw to export it in PDF.
 The export can be configured such as:

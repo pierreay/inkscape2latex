@@ -9,12 +9,29 @@ build-backend = "setuptools.build_meta"
 # Project metadata configuration
 [project]
 name = "scapex"
-version = "0.1.0"
+version = "0.1.1"
+authors = [
+    { name="Pierre Ayoub", email="pierreay@proton.me" },
+]
+description = "The command-line Inkscape exporter, Makefile and LaTeX friendly"
+readme = "README.md"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: POSIX :: Linux",
+    "Development Status :: 5 - Production/Stable",
+    "Topic :: Utilities"
+]
+license = "GPL-3.0-only"
+license-files = ["LICEN[CS]E*"]
 # If any dependencies are added in the future, put them here
 # dependencies = [
 #     "click",
 #     "colorlog"
 # ]
+
+[project.urls]
+Homepage = "https://github.com/pierreay/scapex"
+Issues = "https://github.com/pierreay/scapex/issues"
 
 # Scripts configuration
 [project.scripts]
