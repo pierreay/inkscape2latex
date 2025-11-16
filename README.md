@@ -4,7 +4,7 @@
     </a>
 </p>
 
-# ScapeX — The command-line Inkscape exporter, Makefile and LaTeX friendly
+# ScapeX — The command-line Inkscape eXporter, Makefile and LaTeX friendly
 
 <!-- TODO: -->
 <!-- <p align="center"> -->

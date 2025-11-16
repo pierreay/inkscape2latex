@@ -13,7 +13,7 @@ version = "0.2.0"
 authors = [
     { name="Pierre Ayoub", email="pierreay@proton.me" },
 ]
-description = "The command-line Inkscape exporter, Makefile and LaTeX friendly"
+description = "The command-line Inkscape eXporter, Makefile and LaTeX friendly"
 readme = "README.md"
 classifiers = [
     "Programming Language :: Python :: 3",
