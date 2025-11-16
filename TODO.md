@@ -1,3 +1,7 @@
+# Features
+
+- Add a `--version` option
+
 # Documentation
 
 - Write `INSTALL.md`
