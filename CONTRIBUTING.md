@@ -4,6 +4,7 @@ Follow one of the following method to run `scapex` directly from the repository 
 
 In both case, ensure that the following binaries are available in your `PATH`:
 - `inkscape`
+- `python`
 
 ## Method 1 -- Without virtual environment
 
