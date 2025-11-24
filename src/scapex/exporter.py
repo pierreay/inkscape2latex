@@ -4,6 +4,7 @@
 
 # Standard imports
 import subprocess
+import os
 import logging
 
 # Package module imports
@@ -22,6 +23,11 @@ class Exporter():
         assert type(config) == ExporterConfig
         # Get the configuration
         self.config = config
+        # NOTE: Mitigate race condition in Inkscape which leads to crash with the error message:
+        # `terminate called after throwing an instance of 'Gio::DBus::Error'`
+        # Should be fixed in Inkscape 1.4.2
+        # See: https://gitlab.com/inkscape/inkscape/-/issues/4716
+        self.environ = os.environ | {"SELF_CALL": "xxx"}
 
     def run(self):
         """Run the exportation based on current config, either in full or fragments mode"""
@@ -49,7 +55,7 @@ class Exporter():
 
         # Run the exportation
         LOGGER.debug("Run: {}".format(cmdline))
-        subprocess.run(cmdline)
+        subprocess.run(cmdline, env=self.environ)
 
     def _export_fragments(self):
         """Export an Inkscape SVG in fragments mode"""
@@ -85,4 +91,4 @@ class Exporter():
 
             # Run the exportation
             LOGGER.debug("Run: {}".format(cmdline))
-            subprocess.run(cmdline)
+            subprocess.run(cmdline, env=self.environ)
