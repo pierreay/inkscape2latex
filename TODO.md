@@ -11,6 +11,10 @@
 # Reliability
 
 - If Inkscape crash (*e.g.*, when exportation occurs massively parallel)
+    - Seems to possibly crash with this on `stderr` or `stdout`
+        ```log
+        terminate called after throwing an instance of 'Gio::DBus::Error'
+        ```
     - Implement an "execute and retry" mechanism
         - Random sleep between retries
         - Stop retrying after defined number of fails
