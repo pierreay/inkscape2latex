@@ -54,6 +54,9 @@ which scapex >/dev/null && fpath+=($(scapex --completions-zsh))
 
 Restart your shell and you are ready to go!
 
+> [!TIP]
+> Want to try it directly from the repository? See [CONTRIBUTING.md](./CONTRIBUTING.md)!
+
 # Usage
 
 The simplest usage is to export a single PDF file, optionally into another build directory:
@@ -126,3 +129,7 @@ options:
   --completions-zsh     Print the path of the directory containing the Zsh
                         autocompletion script (instead of exporting)
 ```
+
+# Contributing
+
+See [CONTRIBUTING.md](./CONTRIBUTING.md).
