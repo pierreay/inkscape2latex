@@ -4,7 +4,8 @@
     </a>
 </p>
 
-# ScapeX — The command-line Inkscape eXporter, Makefile and LaTeX friendly
+<h1 align="center">ScapeX</h1>
+<h4 align="center">The command-line Inkscape eXporter, Makefile and LaTeX friendly</h4>
 
 <!-- TODO: When the screencast is done... -->
 <!-- <p align="center"> -->
